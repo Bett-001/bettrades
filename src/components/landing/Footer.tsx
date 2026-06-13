@@ -1,46 +1,89 @@
 import { Link } from "react-router-dom";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, MessageSquare, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border/50 py-12">
+    <footer className="border-t border-border/50 bg-card/30 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-gold rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-lg text-foreground">
-              BETTRADES
-            </span>
-          </Link>
 
-          {/* Links */}
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/disclaimer" className="hover:text-foreground transition-colors">
-              Disclaimer
+        <div className="grid md:grid-cols-4 gap-10 mb-14">
+
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <Link to="/" className="flex items-center gap-2 mb-4">
+              <img src="/logo2.png.png" alt="MQTRADE PRO" className="h-12 w-auto" />
+              <div>
+                <span className="font-display font-black text-lg text-foreground tracking-wide block leading-none">MQTRADE</span>
+                <span className="text-xs font-bold text-primary tracking-widest">PRO</span>
+              </div>
             </Link>
-            <Link to="/terms" className="hover:text-foreground transition-colors">
-              Terms
-            </Link>
-            <Link to="/privacy" className="hover:text-foreground transition-colors">
-              Privacy
-            </Link>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+              Premium trading signals, tools and community for serious traders. Real-time signals across Forex, Indices, Gold and Crypto.
+            </p>
+            <div className="flex items-center gap-3 mt-5">
+              <a href="https://t.me/TonnyFxacademy" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center hover:bg-sky-500/20 transition-colors" title="VVIP Telegram">
+                <MessageSquare className="w-4 h-4 text-sky-500" />
+              </a>
+              <a href="mailto:support@mqtrade.pro" className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary/20 transition-colors" title="Email">
+                <Mail className="w-4 h-4 text-primary" />
+              </a>
+              <a href="#signals" className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/20 transition-colors" title="Signals">
+                <TrendingUp className="w-4 h-4 text-emerald-500" />
+              </a>
+            </div>
           </div>
 
-          {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} BETTRADES. All rights reserved.
-          </p>
+          {/* Services */}
+          <div>
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Services</p>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              {[
+                "Trading Signals",
+                "TradingView Indicators",
+                "NinjaTrader Strategies",
+                "VVIP Telegram",
+                "Trading Journal",
+                "Economic Calendar",
+                "1-on-1 Mentorship",
+                "Prop Firm Prep",
+              ].map(s => (
+                <li key={s}>
+                  <a href="#services" className="hover:text-foreground transition-colors">{s}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Company</p>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              {[
+                { label: "Sign In", href: "/auth" },
+                { label: "Get Started", href: "/auth?mode=signup" },
+                { label: "Pricing", href: "#pricing" },
+                { label: "Disclaimer", href: "/disclaimer" },
+                { label: "Terms of Service", href: "/terms" },
+                { label: "Privacy Policy", href: "/privacy" },
+              ].map(({ label, href }) => (
+                <li key={label}>
+                  <Link to={href} className="hover:text-foreground transition-colors">{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* Disclaimer */}
-        <div className="mt-8 pt-8 border-t border-border/50">
-          <p className="text-xs text-muted-foreground text-center max-w-3xl mx-auto">
-            <strong>Risk Disclaimer:</strong> Trading foreign exchange, indices, and cryptocurrencies carries a high level of risk and may not be suitable for all investors. 
-            Past performance is not indicative of future results. This is for educational purposes only and does not constitute financial advice. 
-            Only trade with money you can afford to lose.
+        {/* Bottom bar */}
+        <div className="pt-8 border-t border-border/50 space-y-4">
+          <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
+            <strong className="text-foreground">Risk Disclaimer:</strong> Trading foreign exchange, indices, and
+            cryptocurrencies carries a high level of risk and may not be suitable for all investors. Past performance
+            is not indicative of future results. This content is for educational purposes only and does not constitute
+            financial advice. Never trade with money you cannot afford to lose.
+          </p>
+          <p className="text-xs text-muted-foreground text-center">
+            © {new Date().getFullYear()} MQTRADE PRO. All rights reserved.
           </p>
         </div>
       </div>
