@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import SessionsClock from "@/components/SessionsClock";
+import Sidebar from "@/components/Sidebar";
 import {
   LayoutDashboard, TrendingUp, LineChart, Send, BookOpen,
   Calendar, Settings, LogOut, Bell, Sun, Moon,
@@ -43,8 +44,6 @@ export default function Dashboard() {
 
   const [activeFilter, setActiveFilter]        = useState("all");
   const [announcements, setAnnouncements]       = useState<Announcement[]>([]);
-  const [sidebarOpen, setSidebarOpen]           = useState(true);
-  const [mobileNavOpen, setMobileNavOpen]       = useState(false);
   const [avatarUrl, setAvatarUrl]               = useState<string | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [avatarPreview, setAvatarPreview]       = useState<string | null>(null);
@@ -134,127 +133,25 @@ export default function Dashboard() {
     </div>
   );
 
-  const SIDEBAR_W = sidebarOpen ? 240 : 68;
-
   return (
     <div className="min-h-screen flex bg-slate-950 text-slate-100">
 
-      {/* ───────────────── SIDEBAR ───────────────── */}
-      <aside
-        className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 z-40 transition-all duration-300 overflow-hidden border-r border-white/5"
-        style={{ width: SIDEBAR_W, background: "#0c1222" }}
-      >
-        {/* Logo row */}
-        <div className="flex items-center h-16 px-4 border-b border-white/5 flex-shrink-0">
-          <img src="/logo2.png.png" alt="MQTRADE PRO" className="w-8 h-8 object-contain flex-shrink-0" />
-          {sidebarOpen && (
-            <div className="ml-3 overflow-hidden whitespace-nowrap">
-              <p className="font-bold text-sm text-white leading-tight">MQTRADE</p>
-              <p className="text-[10px] text-indigo-400 font-bold tracking-widest">PRO</p>
-            </div>
-          )}
-          <button onClick={() => setSidebarOpen(o => !o)}
-            className="ml-auto w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all flex-shrink-0">
-            {sidebarOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </button>
-        </div>
-
-        {/* Avatar */}
-        <button onClick={() => setShowProfileModal(true)}
-          className="flex items-center gap-3 mx-3 mt-4 mb-2 p-2.5 rounded-xl hover:bg-white/5 transition-all text-left group">
-          <AvatarImg size={36} radius="rounded-xl" />
-          {sidebarOpen && (
-            <div className="overflow-hidden">
-              <p className="text-sm font-semibold text-slate-100 truncate">{displayName}</p>
-              <p className="text-[10px] text-emerald-400">● Active Pro</p>
-            </div>
-          )}
-        </button>
-
-        {/* Nav */}
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-2 space-y-0.5 scrollbar-hide">
-          {navItems.map(item => {
-            const isActive = item.href === "/dashboard";
-            return (
-              <Link key={item.label} to={item.href}
-                className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl transition-all duration-150 group/nav ${
-                  isActive
-                    ? "bg-indigo-500/15 text-indigo-300"
-                    : "text-slate-500 hover:text-slate-200 hover:bg-white/5"
-                }`}>
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-indigo-400" : ""}`} />
-                {sidebarOpen && (
-                  <span className="text-sm font-medium whitespace-nowrap overflow-hidden">{item.label}</span>
-                )}
-                {isActive && sidebarOpen && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0" />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Sign out */}
-        <div className="px-2 pb-4 border-t border-white/5 pt-3">
-          <button onClick={() => { signOut(); navigate("/"); }}
-            className="flex items-center gap-3 w-full px-2.5 py-2.5 rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-500/8 transition-all">
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span className="text-sm font-medium">Sign Out</span>}
-          </button>
-        </div>
-      </aside>
-
-      {/* ───────────────── MOBILE DRAWER ───────────────── */}
-      {mobileNavOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} />
-          <aside className="relative w-64 h-full flex flex-col border-r border-white/5" style={{ background: "#0c1222" }}>
-            <div className="flex items-center justify-between h-16 px-4 border-b border-white/5">
-              <div className="flex items-center gap-3">
-                <AvatarImg size={32} radius="rounded-xl" />
-                <div><p className="text-sm font-semibold text-white">{displayName}</p><p className="text-[10px] text-emerald-400">Active Pro</p></div>
-              </div>
-              <button onClick={() => setMobileNavOpen(false)} className="text-slate-500 hover:text-white"><X className="w-5 h-5" /></button>
-            </div>
-            <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
-              {navItems.map(item => (
-                <Link key={item.label} to={item.href} onClick={() => setMobileNavOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all text-sm">
-                  <item.icon className="w-5 h-5 flex-shrink-0" />{item.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="px-2 pb-4 pt-3 border-t border-white/5">
-              <button onClick={() => { signOut(); navigate("/"); }}
-                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-500/8 transition-all text-sm">
-                <LogOut className="w-5 h-5" />Sign Out
-              </button>
-            </div>
-          </aside>
-        </div>
-      )}
+      <Sidebar />
 
       {/* ───────────────── MAIN ───────────────── */}
-      <div className="flex-1 flex flex-col min-h-screen transition-all duration-300"
-        style={{ marginLeft: typeof window !== "undefined" && window.innerWidth >= 768 ? SIDEBAR_W : 0 }}>
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
 
         {/* ── Top header ── */}
         <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-5 border-b border-white/5"
           style={{ background: "rgba(12,18,34,0.95)", backdropFilter: "blur(16px)" }}>
-          {/* Mobile menu */}
-          <button className="md:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5"
-            onClick={() => setMobileNavOpen(true)}>
-            <Menu className="w-5 h-5" />
-          </button>
-
-          {/* Greeting */}
+          {/* Greeting (offset on mobile to clear the sidebar hamburger) */}
           <div className="hidden md:block">
             <p className="text-lg font-bold text-white">Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 17 ? "Afternoon" : "Evening"}, {firstName} 👋</p>
             <p className="text-xs text-slate-500">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
           </div>
 
           {/* Mobile title */}
-          <span className="md:hidden font-bold text-white">Dashboard</span>
+          <span className="md:hidden font-bold text-white pl-12">Dashboard</span>
 
           {/* Right actions */}
           <div className="flex items-center gap-2">

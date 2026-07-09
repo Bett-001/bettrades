@@ -15,8 +15,7 @@ create unique index if not exists trades_user_mt5_ticket
   on trades(user_id, mt5_ticket)
   where mt5_ticket is not null;
 
--- Enable Realtime for trades (journal live-sync)
-alter publication supabase_realtime add table trades;
+-- Realtime for trades is already enabled — skipped
 
 
 -- ── 2. MT5 API tokens table ─────────────────────────────────────────────────

@@ -2,16 +2,31 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const { signInWithGoogle } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+      setGoogleLoading(false);
+    }
+  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -47,6 +62,19 @@ const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
+            <Button
+              variant="outline"
+              className="text-sm gap-2"
+              onClick={handleGoogle}
+              disabled={googleLoading}
+            >
+              {googleLoading ? (
+                <div className="w-4 h-4 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
+              ) : (
+                <FcGoogle className="w-4 h-4" />
+              )}
+              Google
+            </Button>
             <Link to="/auth">
               <Button variant="ghost" className="text-sm">Sign In</Button>
             </Link>
@@ -77,6 +105,19 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-border/50">
+                <Button
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => { setIsOpen(false); handleGoogle(); }}
+                  disabled={googleLoading}
+                >
+                  {googleLoading ? (
+                    <div className="w-4 h-4 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
+                  ) : (
+                    <FcGoogle className="w-4 h-4" />
+                  )}
+                  Continue with Google
+                </Button>
                 <Link to="/auth" onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" className="w-full">Sign In</Button>
                 </Link>

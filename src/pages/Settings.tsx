@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,101 +100,7 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-background flex gap-0">
 
-      {/* ── Floating Sidebar ── */}
-      <div className="relative z-20 p-3 flex-shrink-0">
-        <aside className="w-60 h-[calc(100vh-1.5rem)] rounded-3xl flex flex-col sticky top-3 overflow-hidden
-          bg-card/80 dark:bg-card/50 backdrop-blur-2xl
-          border border-border/60 dark:border-white/8
-          shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)]
-          dark:shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)]">
-
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-20 bg-primary/8 rounded-full blur-2xl pointer-events-none" />
-
-          {/* Logo */}
-          <div className="px-5 py-4 border-b border-border/50">
-            <Link to="/" className="flex items-center gap-2.5">
-              <img src="/logo2.png.png" alt="MQTRADE PRO" className="h-9 w-auto drop-shadow-sm" />
-              <div>
-                <span className="font-display font-bold text-sm text-foreground tracking-wide leading-none block">MQTRADE</span>
-                <span className="text-[10px] font-semibold text-primary tracking-widest">PRO</span>
-              </div>
-            </Link>
-          </div>
-
-          <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-5">
-            <div>
-              <p className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em] px-2 mb-2">Navigation</p>
-              <ul className="space-y-0.5">
-                {navItems.map(item => (
-                  <li key={item.label}>
-                    <Link to={item.href} className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 relative ${item.active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}>
-                      {item.active && <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/20 shadow-sm shadow-primary/10" />}
-                      {!item.active && <div className="absolute inset-0 rounded-xl bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-200" />}
-                      <div className={`relative z-10 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${item.active ? "bg-primary/20 shadow-md shadow-primary/20" : "bg-foreground/5 group-hover:bg-foreground/10"}`}>
-                        <item.icon className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="relative z-10 font-medium text-xs flex-1">{item.label}</span>
-                      {item.active && <div className="relative z-10 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em] px-2 mb-2">Products & Services</p>
-              <ul className="space-y-0.5">
-                {extraProducts.map(product => (
-                  <li key={product.label}>
-                    <button className="group w-full flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground transition-all relative">
-                      <div className="absolute inset-0 rounded-xl bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-200" />
-                      <div className={`relative z-10 w-7 h-7 rounded-lg ${product.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
-                        <product.icon className={`w-3.5 h-3.5 ${product.color}`} />
-                      </div>
-                      <span className="relative z-10 font-medium text-xs flex-1 text-left truncate">{product.label}</span>
-                      <span className={`relative z-10 text-[9px] font-bold px-1.5 py-0.5 rounded-full border flex-shrink-0 ${
-                        product.badge === "Included"
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25"
-                          : product.badge === "Coming Soon"
-                          ? "bg-muted text-muted-foreground border-border"
-                          : "bg-primary/10 text-primary border-primary/25"
-                      }`}>{product.badge}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </nav>
-
-          {/* User */}
-          <div className="px-3 pb-4 pt-3 border-t border-border/50">
-            <div className="flex items-center gap-2 px-2 mb-3">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Active Pro</span>
-              {nextBilling && <span className="text-[9px] text-muted-foreground ml-auto">Renews {nextBilling}</span>}
-            </div>
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-foreground/5 border border-border/50 mb-2">
-              <div className="relative flex-shrink-0">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/40 flex items-center justify-center shadow-lg shadow-primary/30">
-                  <span className="text-primary-foreground font-black text-xs">{initials}</span>
-                </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-card" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold text-xs truncate text-foreground">{displayName}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
-              </div>
-            </div>
-            <button onClick={handleSignOut}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-muted-foreground hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/8 transition-all text-xs font-medium group">
-              <LogOut className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-              Sign Out
-            </button>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
-        </aside>
-      </div>
+      <Sidebar />
 
       {/* Main */}
       <main className="flex-1 overflow-auto">

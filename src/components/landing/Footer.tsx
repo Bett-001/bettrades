@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { TrendingUp, MessageSquare, Mail } from "lucide-react";
+import { TrendingUp, MessageSquare, Mail, Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -26,6 +26,9 @@ const Footer = () => {
               </a>
               <a href="mailto:support@mqtrade.pro" className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary/20 transition-colors" title="Email">
                 <Mail className="w-4 h-4 text-primary" />
+              </a>
+              <a href="https://www.instagram.com/mqtradepro/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center hover:bg-pink-500/20 transition-colors" title="Instagram">
+                <Instagram className="w-4 h-4 text-pink-500" />
               </a>
               <a href="#signals" className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/20 transition-colors" title="Signals">
                 <TrendingUp className="w-4 h-4 text-emerald-500" />

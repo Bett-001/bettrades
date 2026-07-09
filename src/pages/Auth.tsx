@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -19,8 +20,21 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
-  const { user, subscription, isLoading: authLoading, login, register } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const { user, subscription, isLoading: authLoading, login, register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      // Redirect handled by Supabase; on return, the auth effect routes the user.
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+      setGoogleLoading(false);
+    }
+  };
 
   useEffect(() => {
     setMode(searchParams.get("mode") === "signup" ? "signup" : "signin");
@@ -101,6 +115,35 @@ const Auth = () => {
             <h1 className="font-display text-2xl font-bold mb-2">{headings[mode].title}</h1>
             <p className="text-muted-foreground">{headings[mode].sub}</p>
           </div>
+
+          {/* ── Continue with Google (sign in / sign up only) ── */}
+          {mode !== "forgot" && (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full gap-3"
+                onClick={handleGoogle}
+                disabled={googleLoading || isLoading}
+              >
+                {googleLoading ? (
+                  <div className="w-5 h-5 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <FcGoogle className="w-5 h-5" />
+                    Continue with Google
+                  </>
+                )}
+              </Button>
+
+              <div className="flex items-center gap-3 my-6">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">or</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+            </>
+          )}
 
           {/* ── Forgot password — success state ── */}
           {mode === "forgot" && resetSent ? (

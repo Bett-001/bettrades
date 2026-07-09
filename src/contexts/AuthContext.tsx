@@ -21,6 +21,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ hasSubscription: boolean }>;
   register: (email: string, password: string) => Promise<{ hasSubscription: boolean }>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   activateSubscription: (method: string) => Promise<void>;
 }
@@ -103,6 +104,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { hasSubscription: false };
   };
 
+  const signInWithGoogle = async (): Promise<void> => {
+    // OAuth performs a full-page redirect; on return the onAuthStateChange
+    // listener above picks up the session and Auth.tsx routes the user.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth` },
+    });
+    if (error) throw new Error(error.message);
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -125,7 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, subscription, isLoading, login, register, signOut, activateSubscription }}>
+    <AuthContext.Provider value={{ user, subscription, isLoading, login, register, signInWithGoogle, signOut, activateSubscription }}>
       {children}
     </AuthContext.Provider>
   );
