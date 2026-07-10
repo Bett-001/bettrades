@@ -1,73 +1,145 @@
-# Welcome to your Lovable project
+# MQTRADE PRO
 
-## Project info
+Premium trading signals, tools and community for serious traders. Real-time signals across Forex, Indices, Gold and Crypto.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Live:** [bettrades.vercel.app](https://bettrades.vercel.app)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- Real-time trading signals (Forex, Gold, Indices, Crypto)
+- TradingView indicators & NinjaTrader strategies
+- VVIP Telegram signals channel
+- Trading journal with performance tracking
+- Economic calendar with market events
+- Risk/reward calculator
+- 1-on-1 mentorship & prop firm prep
+- Admin panel for signal management & broadcasts
+- MT5 sync via Edge Function
+- Referral system with coupon codes
+- $50/month subscription paywall (M-Pesa + Card)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 + TypeScript + Vite |
+| UI | shadcn/ui + Tailwind CSS |
+| Backend | Supabase (Auth, DB, Storage, Realtime) |
+| Hosting | Vercel |
+| Payments | Pesapal / IntaSend (M-Pesa + Cards) |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Local Development
 
-Follow these steps:
+### Prerequisites
+- Node.js 18+
+- npm
+- Supabase project
+
+### Setup
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repo
+git clone https://github.com/Bett-001/bettrades.git
+cd bettrades
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Create environment file
+cp .env.example .env.local
+# Fill in your Supabase URL and anon key
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+App runs at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Environment Variables
 
-**Use GitHub Codespaces**
+Create a `.env.local` file in the root:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## What technologies are used for this project?
+Never commit `.env.local` — it is gitignored.
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Database Setup
 
-## How can I deploy this project?
+Run the following SQL files in order in your Supabase SQL Editor:
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+1. `supabase_setup.sql` — core tables (profiles, signals, trades, subscriptions)
+2. `supabase_admin_setup.sql` — admin roles and policies
+3. `supabase_missing_tables.sql` — mt5_tokens, referrals, coupons, broadcasts, user_preferences
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## Project Structure
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```
+src/
+├── components/
+│   ├── landing/        # Landing page sections (Hero, Pricing, Footer...)
+│   ├── ui/             # shadcn/ui components + PhoneInput
+│   ├── AppLayout.tsx   # Sidebar + app shell
+│   ├── ProtectedRoute.tsx  # Auth + subscription guard
+│   └── Sidebar.tsx
+├── contexts/
+│   ├── AuthContext.tsx     # Auth state + subscription check
+│   └── ThemeContext.tsx
+├── lib/
+│   └── supabase.ts         # Supabase client
+└── pages/
+    ├── Index.tsx           # Landing page
+    ├── Auth.tsx            # Sign in / Sign up / Forgot password
+    ├── Payment.tsx         # Subscription payment
+    ├── Dashboard.tsx       # Main dashboard + signals
+    ├── Journal.tsx         # Trading journal
+    ├── Performance.tsx     # Stats and analytics
+    ├── Calculator.tsx      # Risk/reward calculator
+    ├── EconomicCalendar.tsx
+    ├── Settings.tsx
+    ├── Admin.tsx
+    ├── Referral.tsx
+    ├── Onboarding.tsx
+    └── ...
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## Authentication Flow
+
+```
+Sign Up → /payment (subscription required)
+Sign In → /dashboard (if paid) or /payment (if unpaid)
+Direct URL → ProtectedRoute redirects unpaid users to /payment
+```
+
+---
+
+## Deployment
+
+Deployed automatically to Vercel on every push to `main`.
+
+To deploy manually:
+```sh
+npm run build   # builds to /dist
+```
+
+---
+
+## Contact
+
+- Instagram: [@mqtradepro](https://www.instagram.com/mqtradepro/)
+- Telegram: [TonnyFxacademy](https://t.me/TonnyFxacademy)
+- Email: support@mqtrade.pro
