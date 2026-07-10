@@ -20,7 +20,7 @@ interface AuthContextType {
   subscription: Subscription | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ hasSubscription: boolean }>;
-  register: (email: string, password: string) => Promise<{ hasSubscription: boolean }>;
+  register: (email: string, password: string, phone?: string) => Promise<{ hasSubscription: boolean }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   activateSubscription: (method: string) => Promise<void>;
@@ -90,12 +90,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { hasSubscription: hasSub };
   };
 
-  const register = async (email: string, password: string): Promise<{ hasSubscription: boolean }> => {
+  const register = async (email: string, password: string, phone?: string): Promise<{ hasSubscription: boolean }> => {
     const name = email.split("@")[0].replace(/[._-]/g, " ");
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name, phone: phone ?? "" } },
     });
     if (error) throw new Error(error.message);
     if (!data.user) throw new Error("Registration failed");

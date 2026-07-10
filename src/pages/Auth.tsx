@@ -3,11 +3,13 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, ArrowLeft, Phone } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import PhoneInput from "@/components/ui/PhoneInput";
+import type { Country } from "@/components/ui/PhoneInput";
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -21,6 +23,7 @@ const Auth = () => {
   const [resetSent, setResetSent] = useState(false);
 
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [phone, setPhone] = useState("");
 
   const { user, subscription, isLoading: authLoading, login, register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -73,7 +76,12 @@ const Auth = () => {
 
     try {
       if (mode === "signup") {
-        await register(email, password);
+        if (!phone) {
+          toast.error("Please enter your phone number");
+          setIsLoading(false);
+          return;
+        }
+        await register(email, password, phone);
         navigate("/payment");
       } else {
         const { hasSubscription } = await login(email, password);
@@ -212,6 +220,20 @@ const Auth = () => {
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                </div>
+              )}
+
+              {/* Phone number — signup only */}
+              {mode === "signup" && (
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5" /> Phone Number
+                  </Label>
+                  <PhoneInput
+                    value={phone}
+                    onChange={(full) => setPhone(full)}
+                    disabled={isLoading}
+                  />
                 </div>
               )}
 
