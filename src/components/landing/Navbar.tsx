@@ -62,24 +62,11 @@ const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button
-              variant="outline"
-              className="text-sm gap-2"
-              onClick={handleGoogle}
-              disabled={googleLoading}
-            >
-              {googleLoading ? (
-                <div className="w-4 h-4 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
-              ) : (
-                <FcGoogle className="w-4 h-4" />
-              )}
-              Google
-            </Button>
             <Link to="/auth">
-              <Button variant="ghost" className="text-sm">Sign In</Button>
+              <Button variant="ghost" className="text-sm font-medium">Sign In</Button>
             </Link>
             <Link to="/auth?mode=signup">
-              <Button variant="hero" className="text-sm shadow-lg shadow-primary/20">Get Started</Button>
+              <Button variant="hero" className="text-sm font-semibold shadow-lg shadow-primary/20 px-5">Get Started</Button>
             </Link>
           </div>
 
