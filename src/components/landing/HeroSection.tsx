@@ -58,7 +58,7 @@ const HeroSection = () => {
             style={{ animationDelay: "0.2s" }}>
             <Link to="/auth?mode=signup">
               <Button variant="hero" size="xl" className="group text-base px-8 py-4 h-auto shadow-2xl shadow-primary/25">
-                Start Trading Now — $50/mo
+                Get Premium Signals Today
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
