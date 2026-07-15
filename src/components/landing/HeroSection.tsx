@@ -49,7 +49,7 @@ const HeroSection = () => {
         <div className="flex flex-col sm:flex-row items-start gap-4 mb-10">
           <Link to="/auth?mode=signup">
             <Button variant="hero" size="lg" className="group px-7 h-12 text-base shadow-xl shadow-primary/25">
-              Get Premium Signals Today
+              Unlock Your Trading Edge
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
