@@ -84,6 +84,22 @@ const HeroSection = () => {
         />
         {/* Left-side fade so text blends into photo */}
         <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-background to-transparent" />
+
+        {/* Face blur — subtle frosted oval over the upper-center face area */}
+        <div
+          className="absolute"
+          style={{
+            top: "12%",
+            left: "25%",
+            width: "52%",
+            height: "48%",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            borderRadius: "50%",
+            mask: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+            WebkitMask: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+          }}
+        />
       </div>
 
       {/* Mobile background (small screens) */}
