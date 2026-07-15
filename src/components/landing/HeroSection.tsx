@@ -76,30 +76,64 @@ const HeroSection = () => {
       </div>
 
       {/* ── RIGHT — photo side ───────────────────────────────────── */}
-      <div className="hidden md:block absolute inset-y-0 right-0 w-[52%]">
-        <img
-          src="/hero-bg.jpg.png"
-          alt="MQTRADE PRO trader"
-          className="w-full h-full object-cover object-center"
-        />
-        {/* Left-side fade so text blends into photo */}
-        <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-background to-transparent" />
+      <div className="hidden md:flex absolute inset-y-0 right-0 w-[54%] items-center justify-center pr-10">
 
-        {/* Face blur — subtle frosted oval over the upper-center face area */}
+        {/* Decorative glow rings behind the frame */}
+        <div className="absolute w-[90%] h-[88%] rounded-[40%_60%_55%_45%/45%_55%_60%_40%] bg-primary/10 blur-2xl -z-10 translate-x-4 translate-y-4" />
+        <div className="absolute w-[85%] h-[83%] rounded-[60%_40%_45%_55%/55%_45%_40%_60%] border border-primary/20 -z-10" />
+
+        {/* Outer accent border (offset, gold) */}
         <div
-          className="absolute"
+          className="absolute w-[82%] h-[84%] border-2 border-primary/30 z-10 pointer-events-none"
           style={{
-            top: "12%",
-            left: "25%",
-            width: "52%",
-            height: "48%",
-            backdropFilter: "blur(6px)",
-            WebkitBackdropFilter: "blur(6px)",
-            borderRadius: "50%",
-            mask: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
-            WebkitMask: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+            clipPath: "polygon(12% 0%, 100% 0%, 100% 88%, 88% 100%, 0% 100%, 0% 12%)",
+            transform: "translate(12px, 12px)",
           }}
         />
+
+        {/* Image frame — cool cut-corner polygon */}
+        <div
+          className="relative w-[82%] h-[84%] overflow-hidden shadow-2xl"
+          style={{
+            clipPath: "polygon(12% 0%, 100% 0%, 100% 88%, 88% 100%, 0% 100%, 0% 12%)",
+          }}
+        >
+          <img
+            src="/hero-bg.jpg.png"
+            alt="MQTRADE PRO trader"
+            className="w-full h-full object-cover object-center scale-105"
+          />
+
+          {/* Face blur */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "transparent",
+              backdropFilter: "blur(0px)",
+            }}
+          />
+          <div
+            className="absolute"
+            style={{
+              top: "10%",
+              left: "20%",
+              width: "55%",
+              height: "50%",
+              backdropFilter: "blur(5px)",
+              WebkitBackdropFilter: "blur(5px)",
+              mask: "radial-gradient(ellipse at center, black 25%, transparent 70%)",
+              WebkitMask: "radial-gradient(ellipse at center, black 25%, transparent 70%)",
+            }}
+          />
+
+          {/* Bottom gradient fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background/60 to-transparent" />
+        </div>
+
+        {/* Corner accent dot — top-left */}
+        <div className="absolute top-[8%] left-[9%] w-3 h-3 rounded-full bg-primary shadow-lg shadow-primary/50 z-20" />
+        {/* Corner accent dot — bottom-right */}
+        <div className="absolute bottom-[8%] right-[9%] w-3 h-3 rounded-full bg-primary shadow-lg shadow-primary/50 z-20" />
       </div>
 
       {/* Mobile background (small screens) */}
