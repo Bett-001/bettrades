@@ -212,11 +212,14 @@ export default function Journal() {
   const generateToken = async () => {
     if (!user) return;
     setTokenLoading(true);
-    const token = crypto.randomUUID();
-    await supabase.from("mt5_tokens").delete().eq("user_id", user.id);
-    const { error } = await supabase.from("mt5_tokens").insert({ user_id: user.id, token });
-    if (!error) { setMt5Token(token); toast.success("API token generated"); }
-    else toast.error("Failed to generate token");
+    const { data, error } = await supabase.rpc("generate_mt5_token");
+    if (!error && data) {
+      setMt5Token(data as string);
+      toast.success("API token generated");
+    } else {
+      console.error("Token generation error:", error);
+      toast.error("Failed to generate token — " + (error?.message ?? "unknown error"));
+    }
     setTokenLoading(false);
   };
 
