@@ -43,7 +43,7 @@ export default function Sidebar() {
     ? user.name.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
     : "Trader";
   const initials = displayName.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
-  const avatarUrl = (user as any)?.user_metadata?.avatar_url ?? null;
+  const avatarUrl = user?.avatarUrl ?? null;
   const nextBilling = subscription?.nextBilling
     ? new Date(subscription.nextBilling).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : null;

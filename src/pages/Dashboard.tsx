@@ -66,8 +66,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user) {
-      const url = (user as any).user_metadata?.avatar_url ?? null;
-      // Only load from metadata on first mount — don't overwrite a freshly uploaded URL
+      const url = user.avatarUrl ?? null;
       setAvatarUrl(prev => prev ?? url);
     }
   }, [user]);

@@ -6,6 +6,7 @@ interface User {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string;
 }
 
 interface Subscription {
@@ -32,6 +33,7 @@ const toUser = (u: SBUser): User => ({
   id: u.id,
   email: u.email!,
   name: (u.user_metadata?.name as string) || u.email!.split("@")[0].replace(/[._-]/g, " "),
+  avatarUrl: (u.user_metadata?.avatar_url as string) || undefined,
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
