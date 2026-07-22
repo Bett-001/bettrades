@@ -16,28 +16,25 @@ const HeroSection = () => {
 
         {/* ── COL 1: TradingView Banner ── */}
         <Link to="/auth?mode=signup" className="hidden lg:flex flex-col flex-shrink-0 w-[22%] h-[78%] group">
-          <div className="relative w-full h-full rounded-3xl overflow-hidden border border-violet-500/40 shadow-2xl shadow-violet-500/15 hover:border-violet-400/60 hover:shadow-violet-500/30 transition-all duration-500">
-            {/* Banner image — full height */}
-            <img
-              src="/tv-banner.png"
-              alt="TradingView Indicators"
-              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-            />
-            {/* Gradient overlay — only bottom for text */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent" />
-            {/* Top badge */}
-            <div className="absolute top-4 left-4">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-600/80 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest">
+          <div className="relative w-full h-full rounded-3xl overflow-hidden border border-violet-500/40 shadow-2xl shadow-violet-500/15 hover:border-violet-400/60 hover:shadow-violet-500/30 transition-all duration-500 bg-black flex flex-col">
+            {/* Banner image — full width, natural size, not cropped */}
+            <div className="flex-1 flex items-center justify-center p-3 pb-0">
+              <img
+                src="/tv-banner.png"
+                alt="TradingView"
+                className="w-full h-auto object-contain rounded-xl"
+              />
+            </div>
+            {/* No overlay on image — text below */}
+            {/* Bottom content */}
+            <div className="p-4 pt-2 flex flex-col gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-violet-600/80 text-white text-[9px] font-black uppercase tracking-widest w-fit">
                 <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> Free Access
               </span>
-            </div>
-            {/* Bottom text */}
-            <div className="absolute bottom-0 left-0 right-0 p-5">
-              <p className="text-violet-300 text-[10px] font-bold uppercase tracking-widest mb-1">Also on MQTRADE</p>
-              <p className="text-white font-display font-black text-lg leading-tight mb-1">TradingView<br />Indicators</p>
-              <p className="text-zinc-400 text-xs mb-4 leading-relaxed">Exclusive invite-only scripts. Buy per indicator — no subscription needed.</p>
-              <div className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors w-fit">
-                Create Free Account <ArrowRight className="w-3 h-3" />
+              <p className="text-white font-display font-bold text-sm leading-tight">TradingView Indicators</p>
+              <p className="text-zinc-400 text-[10px] leading-relaxed">Exclusive invite-only scripts. Buy per indicator — no subscription needed.</p>
+              <div className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl transition-colors w-fit mt-1">
+                Create Free Account <ArrowRight className="w-2.5 h-2.5" />
               </div>
             </div>
           </div>
