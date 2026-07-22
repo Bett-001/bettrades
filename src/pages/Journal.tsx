@@ -363,7 +363,7 @@ export default function Journal() {
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setShowMT5Setup(true)} className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${mt5Token ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25" : "bg-secondary text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"}`}>
-                <Zap className="w-3.5 h-3.5" />
+                <img src="/mt5-logo.png" alt="MT5" className="w-4 h-4 object-contain" />
                 {mt5Token ? "MT5 Connected" : "Connect MT5"}
               </button>
               <Button variant="hero" size="sm" onClick={() => { setForm(blank()); setEditId(null); setShowForm(true); }} className="gap-2">
@@ -623,7 +623,7 @@ export default function Journal() {
                             <td className="px-4 py-3">
                               {trade.source === "mt5" ? (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/15 text-violet-500 border border-violet-500/20">
-                                  <Zap className="w-2.5 h-2.5" />MT5
+                                  <img src="/mt5-logo.png" alt="MT5" className="w-3 h-3 object-contain" />MT5
                                 </span>
                               ) : (
                                 <span className="text-[10px] text-muted-foreground/50">manual</span>
@@ -727,8 +727,8 @@ export default function Journal() {
           <div className="bg-card border border-border rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-violet-500" />
+                <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center overflow-hidden">
+                  <img src="/mt5-logo.png" alt="MT5" className="w-8 h-8 object-contain" />
                 </div>
                 <div>
                   <h2 className="font-display text-lg font-bold">Connect MT5</h2>

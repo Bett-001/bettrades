@@ -63,6 +63,7 @@ const services = [
   },
   {
     icon: BookOpen,
+    logoImage: "/mt5-logo.png",
     title: "MT5 Trading Journal",
     description: "Log trades manually or auto-sync from MetaTrader 5 via our Expert Advisor. Analytics, equity curve, and psychology tracking.",
     tag: "Included",
@@ -294,8 +295,10 @@ const FeaturesSection = () => {
               }}
             >
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${s.bg} border ${s.border} flex items-center justify-center flex-shrink-0`}>
-                  <s.icon className={`w-5 h-5 ${s.color}`} />
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${s.bg} border ${s.border} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+                  {(s as any).logoImage
+                    ? <img src={(s as any).logoImage} alt="" className="w-8 h-8 object-contain" />
+                    : <s.icon className={`w-5 h-5 ${s.color}`} />}
                 </div>
                 <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${s.border} ${s.color} bg-background/80`}>{s.tag}</span>
               </div>
