@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Layers } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -61,7 +61,7 @@ const HeroSection = () => {
         </div>
 
         {/* Trust bullets */}
-        <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+        <div className="flex flex-col gap-2 text-sm text-muted-foreground mb-10">
           {[
             "Real-time Forex, Gold, Indices & Crypto signals",
             "VVIP Telegram + TradingView indicators included",
@@ -72,6 +72,35 @@ const HeroSection = () => {
               {t}
             </span>
           ))}
+        </div>
+
+        {/* Two-path strip */}
+        <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+          {/* MQTRADE PRO option */}
+          <Link to="/auth?mode=signup&plan=elite" className="flex-1">
+            <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group cursor-pointer">
+              <img src="/logo2.png.png" alt="MQTRADE PRO" className="w-9 h-9 object-contain rounded-xl flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-black text-foreground uppercase tracking-wider">MQTRADE PRO</p>
+                <p className="text-[10px] text-primary font-semibold">$50/month · Full platform</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-primary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+          </Link>
+
+          {/* TradingView option */}
+          <Link to="/auth?mode=signup" className="flex-1">
+            <div className="flex items-center gap-3 p-3 rounded-2xl border border-violet-500/30 bg-violet-500/5 hover:bg-violet-500/10 hover:border-violet-500/50 transition-all group cursor-pointer overflow-hidden">
+              <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0">
+                <img src="/tv-banner.png" alt="TradingView" className="w-full h-full object-cover object-left" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-foreground uppercase tracking-wider">TV Indicators</p>
+                <p className="text-[10px] text-violet-400 font-semibold">Free account · Buy per script</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-violet-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+          </Link>
         </div>
       </div>
 
