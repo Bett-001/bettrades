@@ -15,7 +15,7 @@ const HeroSection = () => {
       <div className="w-full h-full flex items-center gap-2 px-6 lg:px-10">
 
         {/* ── COL 1: TradingView Banner ── */}
-        <Link to="/auth?mode=signup" className="hidden lg:flex flex-col flex-shrink-0 w-[34%] h-[78%] group">
+        <Link to="/auth?mode=signup&plan=tv" className="hidden lg:flex flex-col flex-shrink-0 w-[34%] h-[78%] group">
           <div className="relative w-full h-full rounded-3xl overflow-hidden border border-violet-500/40 shadow-2xl shadow-violet-500/15 hover:border-violet-400/60 hover:shadow-violet-500/30 transition-all duration-500 bg-black flex flex-col">
             {/* Banner image */}
             <div className="h-[58%] flex items-center justify-center p-3 pb-1">
@@ -34,8 +34,8 @@ const HeroSection = () => {
                 <p className="text-white font-display font-bold text-base leading-tight">TradingView Strategies</p>
                 <p className="text-zinc-400 text-[10px] leading-relaxed">Invite-only Pine Script strategies & indicators. Buy per script — no subscription needed.</p>
               </div>
-              <div className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-colors w-fit">
-                Create Free Account <ArrowRight className="w-2.5 h-2.5" />
+              <div className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-[11px] font-bold px-3 py-2 rounded-xl transition-colors w-fit">
+                Create TV Account <ArrowRight className="w-2.5 h-2.5" />
               </div>
             </div>
           </div>

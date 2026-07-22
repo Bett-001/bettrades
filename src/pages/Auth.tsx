@@ -25,6 +25,8 @@ const Auth = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [phone, setPhone] = useState("");
 
+  const isTVPlan = searchParams.get("plan") === "tv";
+
   const { user, subscription, isLoading: authLoading, login, register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
@@ -45,9 +47,10 @@ const Auth = () => {
 
   useEffect(() => {
     if (authLoading) return;
-    if (user && subscription?.active) navigate("/dashboard");
+    if (user && isTVPlan) navigate("/indicators");
+    else if (user && subscription?.active) navigate("/dashboard");
     else if (user) navigate("/payment");
-  }, [user, subscription, authLoading, navigate]);
+  }, [user, subscription, authLoading, navigate, isTVPlan]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,10 +85,11 @@ const Auth = () => {
           return;
         }
         await register(email, password, phone);
-        navigate("/payment");
+        navigate(isTVPlan ? "/indicators" : "/payment");
       } else {
         const { hasSubscription } = await login(email, password);
-        navigate(hasSubscription ? "/dashboard" : "/payment");
+        if (isTVPlan) navigate("/indicators");
+        else navigate(hasSubscription ? "/dashboard" : "/payment");
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -93,11 +97,17 @@ const Auth = () => {
     }
   };
 
-  const headings: Record<Mode, { title: string; sub: string }> = {
-    signin: { title: "Welcome Back", sub: "Sign in to access your trading dashboard" },
-    signup: { title: "Start Trading Better", sub: "Create your account to access premium signals" },
-    forgot: { title: "Reset Password", sub: "Enter your email and we'll send you a reset link" },
-  };
+  const headings: Record<Mode, { title: string; sub: string }> = isTVPlan
+    ? {
+        signin: { title: "Welcome Back", sub: "Sign in to access TradingView Strategies & Indicators" },
+        signup: { title: "Join TradingView Strategies", sub: "Free account — access exclusive invite-only indicators" },
+        forgot: { title: "Reset Password", sub: "Enter your email and we'll send you a reset link" },
+      }
+    : {
+        signin: { title: "Welcome Back", sub: "Sign in to access your trading dashboard" },
+        signup: { title: "Start Trading Better", sub: "Create your account to access premium signals" },
+        forgot: { title: "Reset Password", sub: "Enter your email and we'll send you a reset link" },
+      };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
@@ -262,7 +272,9 @@ const Auth = () => {
 
           {mode === "signup" && (
             <p className="text-center text-sm text-muted-foreground mt-6">
-              <span className="text-primary font-medium">$50/month</span> subscription required after signup
+              {isTVPlan
+                ? <><span className="text-violet-400 font-medium">Free</span> — buy indicators individually, no subscription</>
+                : <><span className="text-primary font-medium">$50/month</span> subscription required after signup</>}
             </p>
           )}
 
