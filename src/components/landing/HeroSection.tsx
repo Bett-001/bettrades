@@ -23,8 +23,8 @@ const HeroSection = () => {
               alt="TradingView Indicators"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
-            {/* Gradient overlay bottom */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
+            {/* Gradient overlay — only bottom for text */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent" />
             {/* Top badge */}
             <div className="absolute top-4 left-4">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-600/80 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest">
