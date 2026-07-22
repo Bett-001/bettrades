@@ -74,34 +74,26 @@ const HeroSection = () => {
           ))}
         </div>
 
-        {/* Two-path strip */}
-        <div className="flex flex-col sm:flex-row gap-3 max-w-md">
-          {/* MQTRADE PRO option */}
-          <Link to="/auth?mode=signup&plan=elite" className="flex-1">
-            <div className="flex items-center gap-3 p-3 rounded-2xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group cursor-pointer">
-              <img src="/logo2.png.png" alt="MQTRADE PRO" className="w-9 h-9 object-contain rounded-xl flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-xs font-black text-foreground uppercase tracking-wider">MQTRADE PRO</p>
-                <p className="text-[10px] text-primary font-semibold">$50/month · Full platform</p>
+        {/* TradingView Indicators banner card */}
+        <Link to="/auth?mode=signup" className="block max-w-md group">
+          <div className="relative rounded-2xl overflow-hidden border border-violet-500/30 shadow-xl shadow-violet-500/10 hover:border-violet-500/60 hover:shadow-violet-500/20 transition-all duration-300">
+            {/* Banner image */}
+            <img src="/tv-banner.png" alt="TradingView Indicators" className="w-full h-28 object-cover object-center group-hover:scale-105 transition-transform duration-500" />
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+            {/* Text overlay */}
+            <div className="absolute inset-0 flex items-center justify-between px-5">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-violet-300 block mb-0.5">Also available</span>
+                <p className="text-white font-display font-black text-base leading-tight">TradingView Indicators</p>
+                <p className="text-violet-300 text-xs mt-0.5">Free account · Buy per script</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-primary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-colors shrink-0">
+                Browse <ArrowRight className="w-3 h-3" />
+              </div>
             </div>
-          </Link>
-
-          {/* TradingView option */}
-          <Link to="/auth?mode=signup" className="flex-1">
-            <div className="flex items-center gap-3 p-3 rounded-2xl border border-violet-500/30 bg-violet-500/5 hover:bg-violet-500/10 hover:border-violet-500/50 transition-all group cursor-pointer overflow-hidden">
-              <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0">
-                <img src="/tv-banner.png" alt="TradingView" className="w-full h-full object-cover object-left" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-black text-foreground uppercase tracking-wider">TV Indicators</p>
-                <p className="text-[10px] text-violet-400 font-semibold">Free account · Buy per script</p>
-              </div>
-              <ArrowRight className="w-3.5 h-3.5 text-violet-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-          </Link>
-        </div>
+          </div>
+        </Link>
       </div>
 
       {/* ── RIGHT — photo side ───────────────────────────────────── */}
