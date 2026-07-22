@@ -70,7 +70,7 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row items-start gap-3 mb-6">
             <Link to="/auth?mode=signup">
               <Button variant="hero" size="lg" className="group px-6 h-11 text-sm shadow-xl shadow-primary/25">
-                Get MQTRADE PRO — $50/mo
+                Unlock Your Trading Edge
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
