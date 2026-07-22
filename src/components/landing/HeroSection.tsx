@@ -15,25 +15,26 @@ const HeroSection = () => {
       <div className="w-full h-full flex items-center gap-5 px-6 lg:px-10">
 
         {/* ── COL 1: TradingView Banner ── */}
-        <Link to="/auth?mode=signup" className="hidden lg:flex flex-col flex-shrink-0 w-[22%] h-[78%] group">
+        <Link to="/auth?mode=signup" className="hidden lg:flex flex-col flex-shrink-0 w-[27%] h-[92%] group">
           <div className="relative w-full h-full rounded-3xl overflow-hidden border border-violet-500/40 shadow-2xl shadow-violet-500/15 hover:border-violet-400/60 hover:shadow-violet-500/30 transition-all duration-500 bg-black flex flex-col">
-            {/* Banner image — full width, natural size, not cropped */}
-            <div className="flex-1 flex items-center justify-center p-3 pb-0">
+            {/* Banner image — fills top 65% of card */}
+            <div className="h-[62%] flex items-center justify-center p-3 pb-1">
               <img
                 src="/tv-banner.png"
                 alt="TradingView"
-                className="w-full h-auto object-contain rounded-xl"
+                className="w-full h-full object-contain rounded-xl"
               />
             </div>
-            {/* No overlay on image — text below */}
             {/* Bottom content */}
-            <div className="p-4 pt-2 flex flex-col gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-violet-600/80 text-white text-[9px] font-black uppercase tracking-widest w-fit">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> Free Access
-              </span>
-              <p className="text-white font-display font-bold text-sm leading-tight">TradingView Indicators</p>
-              <p className="text-zinc-400 text-[10px] leading-relaxed">Exclusive invite-only scripts. Buy per indicator — no subscription needed.</p>
-              <div className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl transition-colors w-fit mt-1">
+            <div className="flex-1 p-4 pt-2 flex flex-col gap-2 justify-between">
+              <div className="flex flex-col gap-2">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-violet-600/80 text-white text-[9px] font-black uppercase tracking-widest w-fit">
+                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> Free Access
+                </span>
+                <p className="text-white font-display font-bold text-base leading-tight">TradingView Strategies</p>
+                <p className="text-zinc-400 text-[10px] leading-relaxed">Invite-only Pine Script strategies & indicators. Buy per script — no subscription needed.</p>
+              </div>
+              <div className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-colors w-fit">
                 Create Free Account <ArrowRight className="w-2.5 h-2.5" />
               </div>
             </div>
