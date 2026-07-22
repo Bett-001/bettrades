@@ -42,6 +42,7 @@ const HeroSection = () => {
 
         {/* ── COL 2: Headline + CTAs ── */}
         <div className="flex-1 flex flex-col justify-center min-w-0 py-4">
+        <div className="ml-auto w-full max-w-[420px] pr-2">
 
           {/* Live pill */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/15 border border-primary/25 mb-6 w-fit">
@@ -111,6 +112,7 @@ const HeroSection = () => {
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         {/* ── COL 3: Trader Photo ── */}
