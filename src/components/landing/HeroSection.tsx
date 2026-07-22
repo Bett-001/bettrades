@@ -137,8 +137,8 @@ const HeroSection = () => {
 
       {/* Mobile background */}
       <div className="absolute inset-0 md:hidden -z-10">
-        <img src="/hero-bg.jpg.png" alt="" className="w-full h-full object-cover object-top opacity-30" />
-        <div className="absolute inset-0 bg-background/55" />
+        <img src="/hero-bg.jpg.png" alt="" className="w-full h-full object-cover object-top opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background/90" />
       </div>
 
     </section>
