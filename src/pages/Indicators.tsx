@@ -7,7 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { TrendingUp, CheckCircle, Clock, BarChart2, Layers, ChevronRight, X } from "lucide-react";
+import {
+  TrendingUp, CheckCircle, Clock, BarChart2, Layers,
+  ChevronRight, X, ExternalLink, Tag,
+} from "lucide-react";
 
 interface Indicator {
   id: string;
@@ -16,6 +19,8 @@ interface Indicator {
   description: string;
   category: string;
   preview_image: string | null;
+  price: number | null;
+  tv_invite_link: string | null;
   is_active: boolean;
   created_at: string;
 }
@@ -28,11 +33,11 @@ interface AccessRequest {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Forex:       "bg-blue-500/15 text-blue-400 border-blue-500/30",
-  Indices:     "bg-violet-500/15 text-violet-400 border-violet-500/30",
-  Crypto:      "bg-amber-500/15 text-amber-400 border-amber-500/30",
-  Commodities: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  "All Markets": "bg-primary/15 text-primary border-primary/30",
+  Forex:          "bg-blue-500/15 text-blue-400 border-blue-500/30",
+  Indices:        "bg-violet-500/15 text-violet-400 border-violet-500/30",
+  Crypto:         "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  Commodities:    "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  "All Markets":  "bg-primary/15 text-primary border-primary/30",
 };
 
 export default function Indicators() {
@@ -48,9 +53,11 @@ export default function Indicators() {
   useEffect(() => {
     Promise.all([
       supabase.from("indicators").select("*").eq("is_active", true).order("created_at", { ascending: false }),
-      user ? supabase.from("indicator_access").select("indicator_id,status,tv_username,granted_at").eq("user_id", user.id) : Promise.resolve({ data: [] }),
+      user
+        ? supabase.from("indicator_access").select("indicator_id,status,tv_username,granted_at").eq("user_id", user.id)
+        : Promise.resolve({ data: [] }),
     ]).then(([ind, acc]) => {
-      if (ind.data) setIndicators(ind.data);
+      if (ind.data) setIndicators(ind.data as Indicator[]);
       if (acc.data) setMyAccess(acc.data as AccessRequest[]);
       setLoading(false);
     });
@@ -73,10 +80,15 @@ export default function Indicators() {
       const filtered = prev.filter(a => a.indicator_id !== selected.id);
       return [...filtered, { indicator_id: selected.id, status: "pending", tv_username: tvUsername.trim(), granted_at: null }];
     });
-    toast.success("Access requested! You'll be added within 24 hours.");
+    toast.success("Access requested! You'll be added to the script within 24 hours.");
     setSelected(null);
     setTvUsername("");
     setRequesting(false);
+  };
+
+  const priceLabel = (price: number | null) => {
+    if (!price || price === 0) return "Free";
+    return `$${price.toFixed(0)}`;
   };
 
   return (
@@ -86,15 +98,17 @@ export default function Indicators() {
         {/* Header */}
         <div>
           <h1 className="font-display text-3xl font-black mb-1">TradingView Indicators</h1>
-          <p className="text-muted-foreground">Exclusive indicators included with your MQTRADE PRO subscription. Request access and get added within 24 hours.</p>
+          <p className="text-muted-foreground">
+            Browse our exclusive TradingView strategies &amp; indicators. Purchase access and receive a private invite link — no subscription required.
+          </p>
         </div>
 
         {/* How it works */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { icon: TrendingUp, title: "1. Request Access", desc: "Click any indicator and enter your TradingView username" },
-            { icon: CheckCircle, title: "2. Get Invited", desc: "We manually add you to the private script within 24 hours" },
-            { icon: BarChart2, title: "3. Use on TradingView", desc: "Find the indicator under Invite-Only Scripts in TradingView" },
+            { icon: Tag,          title: "1. Pick an Indicator", desc: "Browse strategies and choose the one that fits your trading style" },
+            { icon: CheckCircle,  title: "2. Request Access",    desc: "Enter your TradingView username and we'll invite you within 24 hours" },
+            { icon: BarChart2,    title: "3. Use on TradingView", desc: "Find the script under Invite-Only Scripts in your TradingView account" },
           ].map(step => (
             <div key={step.title} className="glass-card p-4 flex gap-3 items-start">
               <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
@@ -111,7 +125,7 @@ export default function Indicators() {
         {/* Indicators grid */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1,2,3].map(i => <div key={i} className="glass-card h-52 animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="glass-card h-52 animate-pulse" />)}
           </div>
         ) : indicators.length === 0 ? (
           <div className="glass-card p-12 text-center">
@@ -122,6 +136,7 @@ export default function Indicators() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {indicators.map(ind => {
               const access = getAccess(ind.id);
+              const granted = access?.status === "granted";
               return (
                 <div key={ind.id} className="glass-card overflow-hidden flex flex-col group hover:border-primary/40 transition-all">
                   {/* Preview image */}
@@ -137,31 +152,49 @@ export default function Indicators() {
                         {ind.category}
                       </Badge>
                     </div>
-                    {access && (
-                      <div className="absolute top-2 right-2">
-                        {access.status === "granted"
+                    <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+                      {/* Price badge */}
+                      <Badge variant="outline" className="bg-black/60 text-white border-white/20 text-[10px] font-bold">
+                        {priceLabel(ind.price)}
+                      </Badge>
+                      {/* Status badge */}
+                      {access && (
+                        granted
                           ? <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]"><CheckCircle className="w-3 h-3 mr-1" />Granted</Badge>
                           : <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]"><Clock className="w-3 h-3 mr-1" />Pending</Badge>
-                        }
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
 
                   <div className="p-4 flex flex-col flex-1">
                     <h3 className="font-display font-bold text-sm mb-1">{ind.name}</h3>
                     <p className="text-xs text-muted-foreground flex-1 leading-relaxed">{ind.short_desc}</p>
+
+                    {/* TV invite link shown after access granted */}
+                    {granted && ind.tv_invite_link && (
+                      <a
+                        href={ind.tv_invite_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Open on TradingView
+                      </a>
+                    )}
+
                     <Button
                       size="sm"
                       className="mt-3 w-full"
-                      variant={access?.status === "granted" ? "outline" : "hero"}
+                      variant={granted ? "outline" : "hero"}
                       onClick={() => { setSelected(ind); setTvUsername(access?.tv_username ?? ""); }}
-                      disabled={access?.status === "granted"}
+                      disabled={granted}
                     >
-                      {access?.status === "granted"
+                      {granted
                         ? "Access Granted ✓"
                         : access?.status === "pending"
                         ? "Pending — Update Request"
-                        : <>Request Access <ChevronRight className="w-3 h-3 ml-1" /></>
+                        : <><Tag className="w-3 h-3 mr-1" />Get Access — {priceLabel(ind.price)}<ChevronRight className="w-3 h-3 ml-1" /></>
                       }
                     </Button>
                   </div>
@@ -181,9 +214,14 @@ export default function Indicators() {
               <X className="w-5 h-5" />
             </button>
             <h2 className="font-display font-bold text-lg mb-1">Request Access</h2>
-            <p className="text-sm text-muted-foreground mb-5">
-              Enter your TradingView username to get invited to <span className="text-foreground font-semibold">{selected.name}</span>.
+            <p className="text-sm text-muted-foreground mb-1">
+              <span className="text-foreground font-semibold">{selected.name}</span>
             </p>
+            {selected.price ? (
+              <p className="text-sm text-primary font-bold mb-4">${selected.price.toFixed(0)} one-time</p>
+            ) : (
+              <p className="text-sm text-emerald-400 font-bold mb-4">Free</p>
+            )}
 
             {selected.description && (
               <div className="bg-secondary/50 rounded-xl p-3 mb-5 text-sm text-muted-foreground leading-relaxed">
@@ -204,7 +242,9 @@ export default function Indicators() {
             </div>
 
             <Button variant="hero" className="w-full" onClick={requestAccess} disabled={requesting}>
-              {requesting ? <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> : "Submit Request"}
+              {requesting
+                ? <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                : "Submit Request"}
             </Button>
           </div>
         </div>

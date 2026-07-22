@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthOnlyRoute from "./components/AuthOnlyRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Payment from "./pages/Payment";
@@ -55,7 +56,7 @@ const App = () => (
             <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/referral" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
-            <Route path="/indicators" element={<ProtectedRoute><Indicators /></ProtectedRoute>} />
+            <Route path="/indicators" element={<AuthOnlyRoute><Indicators /></AuthOnlyRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

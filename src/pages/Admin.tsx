@@ -256,15 +256,17 @@ function CouponsPanel() {
 }
 
 // ── Indicators Panel ────────────────────────────────────────────────────────
-interface IIndicator { id:string; name:string; short_desc:string; description:string; category:string; preview_image:string|null; is_active:boolean; }
+interface IIndicator { id:string; name:string; short_desc:string; description:string; category:string; preview_image:string|null; price:number|null; tv_invite_link:string|null; is_active:boolean; }
 interface IAccess { id:string; user_id:string; indicator_id:string; tv_username:string; status:string; granted_at:string|null; created_at:string; email?:string; indicator_name?:string; }
+
+const blankIndForm = () => ({ name:"", short_desc:"", description:"", category:"Forex", preview_image:"", price:"", tv_invite_link:"" });
 
 function IndicatorsPanel() {
   const [indicators, setIndicators] = useState<IIndicator[]>([]);
   const [requests, setRequests]     = useState<IAccess[]>([]);
   const [loading, setLoading]       = useState(true);
   const [showForm, setShowForm]     = useState(false);
-  const [form, setForm] = useState({ name:"", short_desc:"", description:"", category:"Forex", preview_image:"" });
+  const [form, setForm] = useState(blankIndForm());
 
   const load = async () => {
     setLoading(true);
@@ -272,7 +274,7 @@ function IndicatorsPanel() {
       supabase.from("indicators").select("*").order("created_at", { ascending: false }),
       supabase.from("indicator_access").select("*, indicators(name)").order("created_at", { ascending: false }),
     ]);
-    if (indRes.data) setIndicators(indRes.data);
+    if (indRes.data) setIndicators(indRes.data as IIndicator[]);
     if (accRes.data) {
       const mapped = accRes.data.map((r: Record<string, unknown>) => ({
         ...(r as IAccess),
@@ -287,10 +289,19 @@ function IndicatorsPanel() {
 
   const createIndicator = async () => {
     if (!form.name.trim()) { toast.error("Name required"); return; }
-    const { error } = await supabase.from("indicators").insert({ ...form, is_active: true });
+    const { error } = await supabase.from("indicators").insert({
+      name: form.name,
+      short_desc: form.short_desc,
+      description: form.description,
+      category: form.category,
+      preview_image: form.preview_image || null,
+      price: form.price ? parseFloat(form.price) : null,
+      tv_invite_link: form.tv_invite_link || null,
+      is_active: true,
+    });
     if (error) { toast.error(error.message); return; }
     toast.success("Indicator added!");
-    setForm({ name:"", short_desc:"", description:"", category:"Forex", preview_image:"" });
+    setForm(blankIndForm());
     setShowForm(false);
     load();
   };
@@ -341,12 +352,19 @@ function IndicatorsPanel() {
             <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Category</label>
               <select value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))} className="w-full h-10 rounded-xl bg-secondary border border-border px-3 text-sm">
                 {CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Price (USD)</label>
+              <Input type="number" step="1" min="0" value={form.price} onChange={e=>setForm(f=>({...f,price:e.target.value}))} placeholder="e.g. 29 (leave blank for free)" className="bg-secondary" /></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Preview Image URL</label>
+              <Input value={form.preview_image} onChange={e=>setForm(f=>({...f,preview_image:e.target.value}))} placeholder="https://..." className="bg-secondary" /></div>
             <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Short Description</label>
               <Input value={form.short_desc} onChange={e=>setForm(f=>({...f,short_desc:e.target.value}))} placeholder="One-liner shown on card" className="bg-secondary" /></div>
             <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Full Description</label>
               <textarea value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} placeholder="Detailed description shown in modal" rows={3} className="w-full rounded-xl bg-secondary border border-border px-3 py-2 text-sm resize-none" /></div>
-            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Preview Image URL (optional)</label>
-              <Input value={form.preview_image} onChange={e=>setForm(f=>({...f,preview_image:e.target.value}))} placeholder="https://..." className="bg-secondary" /></div>
+            <div className="space-y-1 sm:col-span-2">
+              <label className="text-xs font-medium text-muted-foreground">TradingView Invite Link</label>
+              <Input value={form.tv_invite_link} onChange={e=>setForm(f=>({...f,tv_invite_link:e.target.value}))} placeholder="https://www.tradingview.com/script/..." className="bg-secondary" />
+              <p className="text-xs text-muted-foreground">Shown to user only after access is granted</p>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button onClick={createIndicator} variant="hero">Save Indicator</Button>
@@ -362,16 +380,22 @@ function IndicatorsPanel() {
             <thead><tr className="border-b border-border">
               <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Name</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Category</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Short Desc</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Price</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">TV Link</th>
               <th className="px-4 py-3" />
             </tr></thead>
             <tbody>
-              {indicators.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">No indicators yet</td></tr>}
+              {indicators.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">No indicators yet</td></tr>}
               {indicators.map(ind => (
                 <tr key={ind.id} className="border-b border-border/50 hover:bg-secondary/30">
                   <td className="px-4 py-3 font-medium">{ind.name}</td>
                   <td className="px-4 py-3 text-muted-foreground">{ind.category}</td>
-                  <td className="px-4 py-3 text-muted-foreground truncate max-w-xs">{ind.short_desc}</td>
+                  <td className="px-4 py-3 text-emerald-400 font-semibold">{ind.price ? `$${ind.price}` : "Free"}</td>
+                  <td className="px-4 py-3">
+                    {ind.tv_invite_link
+                      ? <a href={ind.tv_invite_link} target="_blank" rel="noopener noreferrer" className="text-primary text-xs hover:underline truncate block max-w-[160px]">View link</a>
+                      : <span className="text-xs text-muted-foreground">—</span>}
+                  </td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={()=>deleteIndicator(ind.id)} className="text-red-400 hover:text-red-300 transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </td>

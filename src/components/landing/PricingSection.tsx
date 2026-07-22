@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, X, Zap, ArrowRight } from "lucide-react";
+import { Check, X, Zap, ArrowRight, Layers } from "lucide-react";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -254,6 +254,24 @@ const PricingSection = () => {
               </div>
             );
           })}
+        </div>
+
+        {/* Free indicators banner */}
+        <div className="max-w-3xl mx-auto mt-8 rounded-2xl border border-primary/25 bg-primary/5 p-6 flex flex-col sm:flex-row items-center gap-5">
+          <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+            <Layers className="w-6 h-6 text-primary" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <p className="font-display font-bold text-base text-foreground">Just want TradingView Indicators?</p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Create a <strong className="text-foreground">free account</strong> — no subscription required. Browse our exclusive TradingView strategies and purchase individual indicator access with a one-time payment.
+            </p>
+          </div>
+          <Link to="/auth?mode=signup" className="shrink-0">
+            <button className="px-5 py-2.5 rounded-xl border-2 border-primary text-primary font-bold text-sm hover:bg-primary/10 transition-all whitespace-nowrap flex items-center gap-2">
+              Create Free Account <ArrowRight className="w-4 h-4" />
+            </button>
+          </Link>
         </div>
 
         {/* Trust line */}
