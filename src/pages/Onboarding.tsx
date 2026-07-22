@@ -108,8 +108,8 @@ export default function Onboarding() {
           {/* Step 2 — Telegram */}
           {step === 2 && (
             <div className="p-8">
-              <div className="w-14 h-14 rounded-2xl mb-5 flex items-center justify-center" style={{ background: "rgba(34,158,217,0.12)" }}>
-                <Send className="w-7 h-7 text-[#229ED9]" />
+              <div className="w-14 h-14 rounded-2xl mb-5 flex items-center justify-center overflow-hidden" style={{ background: "rgba(34,158,217,0.12)" }}>
+                <img src="/telegram-logo.png.jpg" alt="Telegram" className="w-10 h-10 object-contain" />
               </div>
               <h2 className="font-['Sora'] font-bold text-xl text-[#dfe2eb] mb-2">Join VVIP Telegram Channel</h2>
               <p className="text-[#b9caca] font-['Geist'] text-sm mb-6 leading-relaxed">

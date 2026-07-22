@@ -12,7 +12,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard",         href: "/dashboard" },
   { icon: Signal,          label: "Signals",           href: "/dashboard" },
   { icon: LineChartIcon,   label: "Strategies",        href: "/dashboard" },
-  { icon: MessageSquare,   label: "Telegram",          href: "https://t.me/TonnyFxacademy", external: true },
+  { icon: MessageSquare,   label: "Telegram",          href: "https://t.me/TonnyFxacademy", external: true, img: "/telegram-logo.png.jpg" },
   { icon: BookOpen,        label: "Trading Journal",   href: "/journal" },
   { icon: Calculator,      label: "Calculator",        href: "/calculator" },
   { icon: BarChart2,       label: "Performance",       href: "/performance" },
@@ -63,8 +63,10 @@ export default function Sidebar() {
               <>
                 {active && <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/20 shadow-sm shadow-primary/10" />}
                 {!active && <div className="absolute inset-0 rounded-xl bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-200" />}
-                <div className={`relative z-10 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${active ? "bg-primary/20 shadow-md shadow-primary/20" : "bg-foreground/5 group-hover:bg-foreground/10"}`}>
-                  <item.icon className="w-3.5 h-3.5" />
+                <div className={`relative z-10 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 overflow-hidden ${active ? "bg-primary/20 shadow-md shadow-primary/20" : "bg-foreground/5 group-hover:bg-foreground/10"}`}>
+                  {(item as any).img
+                    ? <img src={(item as any).img} alt={item.label} className="w-5 h-5 object-contain" />
+                    : <item.icon className="w-3.5 h-3.5" />}
                 </div>
                 <span className="relative z-10 font-medium text-xs flex-1">{item.label}</span>
                 {active && <div className="relative z-10 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}

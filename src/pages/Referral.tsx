@@ -136,7 +136,7 @@ export default function Referral() {
             <button onClick={shareOnTelegram}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl border font-['Geist'] text-sm font-semibold transition-all hover:opacity-80"
               style={{ borderColor: "rgba(34,158,217,0.3)", background: "rgba(34,158,217,0.1)", color: "#229ED9" }}>
-              <Send className="w-4 h-4" /> Telegram
+              <img src="/telegram-logo.png.jpg" alt="Telegram" className="w-4 h-4 object-contain" /> Telegram
             </button>
             <button onClick={copyLink}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl border font-['Geist'] text-sm font-semibold transition-all hover:opacity-80"
