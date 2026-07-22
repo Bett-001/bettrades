@@ -126,12 +126,6 @@ const HeroSection = () => {
           <div className="relative w-full h-full overflow-hidden shadow-2xl"
             style={{ clipPath: "polygon(10% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%, 0% 10%)" }}>
             <img src="/hero-bg.jpg.png" alt="MQTRADE PRO trader" className="w-full h-full object-cover object-center scale-105" />
-            {/* Face blur */}
-            <div className="absolute"
-              style={{ top: "8%", left: "18%", width: "58%", height: "48%",
-                backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
-                mask: "radial-gradient(ellipse at center, black 25%, transparent 70%)",
-                WebkitMask: "radial-gradient(ellipse at center, black 25%, transparent 70%)" }} />
             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background/60 to-transparent" />
           </div>
           {/* Accent dots */}
