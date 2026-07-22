@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import AppLayout from "@/components/AppLayout";
+import TVLayout from "@/components/TVLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,7 +92,7 @@ export default function Indicators() {
   };
 
   return (
-    <AppLayout>
+    <TVLayout>
       <div className="max-w-5xl mx-auto p-6 space-y-8">
 
         {/* Header */}
@@ -249,6 +249,6 @@ export default function Indicators() {
           </div>
         </div>
       )}
-    </AppLayout>
+    </TVLayout>
   );
 }

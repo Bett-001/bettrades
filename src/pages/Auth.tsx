@@ -47,7 +47,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (authLoading) return;
-    if (user && isTVPlan) navigate("/indicators");
+    if (user && isTVPlan) navigate("/tv-dashboard");
     else if (user && subscription?.active) navigate("/dashboard");
     else if (user) navigate("/payment");
   }, [user, subscription, authLoading, navigate, isTVPlan]);
@@ -85,10 +85,10 @@ const Auth = () => {
           return;
         }
         await register(email, password, phone);
-        navigate(isTVPlan ? "/indicators" : "/payment");
+        navigate(isTVPlan ? "/tv-dashboard" : "/payment");
       } else {
         const { hasSubscription } = await login(email, password);
-        if (isTVPlan) navigate("/indicators");
+        if (isTVPlan) navigate("/tv-dashboard");
         else navigate(hasSubscription ? "/dashboard" : "/payment");
       }
     } catch (err) {
