@@ -15,7 +15,7 @@ const HeroSection = () => {
       <div className="w-full h-full flex items-center gap-2 px-6 lg:px-10">
 
         {/* ── COL 1: TradingView Banner ── */}
-        <Link to="/auth?mode=signup" className="hidden lg:flex flex-col flex-shrink-0 w-[28%] h-[52%] group">
+        <Link to="/auth?mode=signup" className="hidden lg:flex flex-col flex-shrink-0 w-[34%] h-[78%] group">
           <div className="relative w-full h-full rounded-3xl overflow-hidden border border-violet-500/40 shadow-2xl shadow-violet-500/15 hover:border-violet-400/60 hover:shadow-violet-500/30 transition-all duration-500 bg-black flex flex-col">
             {/* Banner image */}
             <div className="h-[58%] flex items-center justify-center p-3 pb-1">
