@@ -12,8 +12,23 @@ serve(async (req) => {
   }
 
   try {
-    const body = await req.json();
-    const { token, ticket, symbol, type, entry, exit: exitPrice, lots, pnl, date, sl, tp } = body;
+    const rawBody = await req.text();
+    console.log("Raw body received:", rawBody.slice(0, 200));
+
+    let body: Record<string, unknown>;
+    try {
+      body = JSON.parse(rawBody.trim());
+    } catch (e) {
+      console.error("JSON parse error:", e, "Raw:", rawBody.slice(0, 100));
+      return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+        status: 400,
+        headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    const { token, ticket, symbol, type, entry, exit: exitPrice, lots, pnl, date, sl, tp } = body as Record<string, unknown>;
+
+    console.log("Token received:", token, "length:", String(token ?? "").length);
 
     if (!token || !ticket || !symbol || !type || entry == null || exitPrice == null) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
@@ -22,20 +37,23 @@ serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    console.log("Supabase URL:", supabaseUrl, "Key present:", !!serviceKey);
+
+    const supabase = createClient(supabaseUrl, serviceKey);
 
     // Validate token → resolve user_id
     const { data: tokenRow, error: tokenErr } = await supabase
       .from("mt5_tokens")
       .select("user_id")
-      .eq("token", token)
+      .eq("token", String(token).trim())
       .single();
 
+    console.log("Token lookup result:", JSON.stringify(tokenRow), "Error:", tokenErr?.message);
+
     if (tokenErr || !tokenRow) {
-      return new Response(JSON.stringify({ error: "Invalid API token" }), {
+      return new Response(JSON.stringify({ error: "Invalid API token", detail: tokenErr?.message }), {
         status: 401,
         headers: { ...cors, "Content-Type": "application/json" },
       });

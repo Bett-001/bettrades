@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Users, Signal, Megaphone, BookOpen,
   LogOut, Plus, Trash2, Edit2, X as XIcon, TrendingUp, TrendingDown,
   CheckCircle, XCircle, ShieldCheck, Bell, BarChart2, Pin,
-  DollarSign, Send, Tag, Copy,
+  DollarSign, Send, Tag, Copy, Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -33,7 +33,7 @@ interface Strategy {
   content: string; category: string; timeframe: string; created_at: string;
 }
 
-type AdminTab = "overview"|"signals"|"subscribers"|"announcements"|"strategies"|"revenue"|"broadcast"|"coupons";
+type AdminTab = "overview"|"signals"|"subscribers"|"announcements"|"strategies"|"revenue"|"broadcast"|"coupons"|"indicators";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const ASSETS = ["EUR/USD","GBP/USD","USD/JPY","AUD/USD","GBP/JPY","XAU/USD","NAS100","US30","BTC/USD","ETH/USD"];
@@ -61,6 +61,7 @@ const navItems = [
   { icon: DollarSign,      label: "Revenue",       tab: "revenue" },
   { icon: Send,            label: "Broadcast",     tab: "broadcast" },
   { icon: Tag,             label: "Coupons",       tab: "coupons" },
+  { icon: Layers,          label: "Indicators",    tab: "indicators" },
 ];
 
 const ANNTYPE_STYLES: Record<string,string> = {
@@ -243,6 +244,179 @@ function CouponsPanel() {
                     <button onClick={()=>toggleActive(c.code)} className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 py-1 transition-colors">
                       {c.active?"Disable":"Enable"}
                     </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Indicators Panel ────────────────────────────────────────────────────────
+interface IIndicator { id:string; name:string; short_desc:string; description:string; category:string; preview_image:string|null; is_active:boolean; }
+interface IAccess { id:string; user_id:string; indicator_id:string; tv_username:string; status:string; granted_at:string|null; created_at:string; email?:string; indicator_name?:string; }
+
+function IndicatorsPanel() {
+  const [indicators, setIndicators] = useState<IIndicator[]>([]);
+  const [requests, setRequests]     = useState<IAccess[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [showForm, setShowForm]     = useState(false);
+  const [form, setForm] = useState({ name:"", short_desc:"", description:"", category:"Forex", preview_image:"" });
+
+  const load = async () => {
+    setLoading(true);
+    const [indRes, accRes] = await Promise.all([
+      supabase.from("indicators").select("*").order("created_at", { ascending: false }),
+      supabase.from("indicator_access").select("*, indicators(name)").order("created_at", { ascending: false }),
+    ]);
+    if (indRes.data) setIndicators(indRes.data);
+    if (accRes.data) {
+      const mapped = accRes.data.map((r: Record<string, unknown>) => ({
+        ...(r as IAccess),
+        indicator_name: (r.indicators as { name: string } | null)?.name ?? "",
+      }));
+      setRequests(mapped);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const createIndicator = async () => {
+    if (!form.name.trim()) { toast.error("Name required"); return; }
+    const { error } = await supabase.from("indicators").insert({ ...form, is_active: true });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Indicator added!");
+    setForm({ name:"", short_desc:"", description:"", category:"Forex", preview_image:"" });
+    setShowForm(false);
+    load();
+  };
+
+  const deleteIndicator = async (id: string) => {
+    await supabase.from("indicators").delete().eq("id", id);
+    setIndicators(prev => prev.filter(i => i.id !== id));
+    toast.success("Deleted");
+  };
+
+  const grantAccess = async (req: IAccess) => {
+    const { error } = await supabase.from("indicator_access").update({ status: "granted", granted_at: new Date().toISOString() }).eq("id", req.id);
+    if (error) { toast.error(error.message); return; }
+    setRequests(prev => prev.map(r => r.id === req.id ? { ...r, status: "granted", granted_at: new Date().toISOString() } : r));
+    toast.success(`Access granted to ${req.tv_username}`);
+  };
+
+  const revokeAccess = async (req: IAccess) => {
+    const { error } = await supabase.from("indicator_access").update({ status: "revoked" }).eq("id", req.id);
+    if (error) { toast.error(error.message); return; }
+    setRequests(prev => prev.map(r => r.id === req.id ? { ...r, status: "revoked" } : r));
+    toast.success("Access revoked");
+  };
+
+  const CATS = ["Forex","Indices","Crypto","Commodities","All Markets"];
+  const pending = requests.filter(r => r.status === "pending");
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-xl font-bold">TradingView Indicators</h2>
+          <p className="text-sm text-muted-foreground">{indicators.length} indicators · {pending.length} pending requests</p>
+        </div>
+        <Button onClick={() => setShowForm(s => !s)} className="gap-2">
+          <Plus className="w-4 h-4" /> Add Indicator
+        </Button>
+      </div>
+
+      {/* Add form */}
+      {showForm && (
+        <div className="glass-card p-5 space-y-4">
+          <h3 className="font-semibold">New Indicator</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Name *</label>
+              <Input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="e.g. MQTRADE Scalper Pro" className="bg-secondary" /></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Category</label>
+              <select value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))} className="w-full h-10 rounded-xl bg-secondary border border-border px-3 text-sm">
+                {CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Short Description</label>
+              <Input value={form.short_desc} onChange={e=>setForm(f=>({...f,short_desc:e.target.value}))} placeholder="One-liner shown on card" className="bg-secondary" /></div>
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Full Description</label>
+              <textarea value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} placeholder="Detailed description shown in modal" rows={3} className="w-full rounded-xl bg-secondary border border-border px-3 py-2 text-sm resize-none" /></div>
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Preview Image URL (optional)</label>
+              <Input value={form.preview_image} onChange={e=>setForm(f=>({...f,preview_image:e.target.value}))} placeholder="https://..." className="bg-secondary" /></div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={createIndicator} variant="hero">Save Indicator</Button>
+            <Button variant="outline" onClick={()=>setShowForm(false)}>Cancel</Button>
+          </div>
+        </div>
+      )}
+
+      {/* Indicators list */}
+      {loading ? <div className="h-32 animate-pulse glass-card" /> : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead><tr className="border-b border-border">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Name</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Category</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Short Desc</th>
+              <th className="px-4 py-3" />
+            </tr></thead>
+            <tbody>
+              {indicators.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">No indicators yet</td></tr>}
+              {indicators.map(ind => (
+                <tr key={ind.id} className="border-b border-border/50 hover:bg-secondary/30">
+                  <td className="px-4 py-3 font-medium">{ind.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{ind.category}</td>
+                  <td className="px-4 py-3 text-muted-foreground truncate max-w-xs">{ind.short_desc}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={()=>deleteIndicator(ind.id)} className="text-red-400 hover:text-red-300 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Access Requests */}
+      <div>
+        <h3 className="font-display font-semibold mb-3 flex items-center gap-2">
+          <Layers className="w-4 h-4 text-primary" /> Access Requests
+          {pending.length > 0 && <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{pending.length} pending</span>}
+        </h3>
+        <div className="glass-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead><tr className="border-b border-border">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">TV Username</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Indicator</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Requested</th>
+              <th className="px-4 py-3" />
+            </tr></thead>
+            <tbody>
+              {requests.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">No requests yet</td></tr>}
+              {requests.map(req => (
+                <tr key={req.id} className="border-b border-border/50 hover:bg-secondary/30">
+                  <td className="px-4 py-3 font-mono font-medium text-primary">{req.tv_username}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{req.indicator_name}</td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      req.status === "granted" ? "bg-emerald-500/15 text-emerald-400"
+                      : req.status === "revoked" ? "bg-red-500/15 text-red-400"
+                      : "bg-amber-500/15 text-amber-400"}`}>{req.status}</span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(req.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-right flex gap-2 justify-end">
+                    {req.status !== "granted" && (
+                      <button onClick={()=>grantAccess(req)} className="text-xs px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 transition-colors font-medium">Grant</button>
+                    )}
+                    {req.status === "granted" && (
+                      <button onClick={()=>revokeAccess(req)} className="text-xs px-3 py-1 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors font-medium">Revoke</button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -796,6 +970,11 @@ export default function Admin() {
           {/* ── COUPONS ── */}
           {tab==="coupons" && (
             <CouponsPanel />
+          )}
+
+          {/* ── INDICATORS ── */}
+          {tab==="indicators" && (
+            <IndicatorsPanel />
           )}
 
         </div>

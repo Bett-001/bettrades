@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard, Signal, LineChart as LineChartIcon, MessageSquare,
   BookOpen, Calculator, BarChart2, Calendar, Gift, Settings as SettingsIcon,
-  LogOut, Users, Trophy, Video, Menu, X as XIcon,
+  LogOut, Users, Trophy, Video, Menu, X as XIcon, Layers,
 } from "lucide-react";
 
 /** Canonical navigation — shared by every authenticated page. */
@@ -17,6 +17,7 @@ const navItems = [
   { icon: Calculator,      label: "Calculator",        href: "/calculator" },
   { icon: BarChart2,       label: "Performance",       href: "/performance" },
   { icon: Calendar,        label: "Economic Calendar", href: "/calendar" },
+  { icon: Layers,          label: "TV Indicators",     href: "/indicators" },
   { icon: Gift,            label: "Referral",          href: "/referral" },
   { icon: SettingsIcon,    label: "Settings",          href: "/settings" },
 ];
