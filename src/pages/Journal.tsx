@@ -363,7 +363,7 @@ export default function Journal() {
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setShowMT5Setup(true)} className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${mt5Token ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25" : "bg-secondary text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"}`}>
-                <img src="/mt5-logo.png" alt="MT5" className="w-5 h-5 object-contain rounded" />
+                <img src="/mt5-logo.png" alt="MT5" className="w-4 h-4 rounded object-cover flex-shrink-0" />
                 {mt5Token ? "MT5 Connected" : "Connect MT5"}
               </button>
               <Button variant="hero" size="sm" onClick={() => { setForm(blank()); setEditId(null); setShowForm(true); }} className="gap-2">
@@ -727,7 +727,7 @@ export default function Journal() {
           <div className="bg-card border border-border rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div className="flex items-center gap-3">
-                <img src="/mt5-logo.png" alt="MT5" className="w-10 h-10 object-contain rounded-xl" />
+                <img src="/mt5-logo.png" alt="MT5" className="w-12 h-12 rounded-2xl object-cover flex-shrink-0 shadow-lg" />
                 <div>
                   <h2 className="font-display text-lg font-bold">Connect MT5</h2>
                   <p className="text-xs text-muted-foreground">Trades sync automatically when you close a position</p>
