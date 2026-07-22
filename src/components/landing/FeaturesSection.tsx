@@ -53,6 +53,7 @@ const services = [
   },
   {
     icon: NinjaIcon,
+    logoImage: "/ninjatrader-logo.png.png",
     title: "NinjaTrader Strategies",
     description: "Professional NT8 indicators and fully automated strategies for futures and CFD traders. Plug-and-play setup.",
     tag: "Tools",
