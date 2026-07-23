@@ -109,9 +109,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithGoogle = async (): Promise<void> => {
     // OAuth performs a full-page redirect; on return the onAuthStateChange
     // listener above picks up the session and Auth.tsx routes the user.
+    // Preserve the plan selection (e.g. ?plan=tv) across the round-trip so a
+    // free TradingView signup via Google still lands on the TV dashboard.
+    const plan = new URLSearchParams(window.location.search).get("plan");
+    const redirectTo = `${window.location.origin}/auth${plan ? `?plan=${encodeURIComponent(plan)}` : ""}`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth` },
+      options: { redirectTo },
     });
     if (error) throw new Error(error.message);
   };

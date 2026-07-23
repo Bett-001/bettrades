@@ -152,7 +152,7 @@ export default function TwoProductsSection() {
               </ul>
 
               {/* CTA */}
-              <Link to="/auth?mode=signup">
+              <Link to="/auth?mode=signup&plan=tv">
                 <button className="w-full py-4 rounded-2xl font-display font-bold text-base flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-xl group"
                   style={{ background: "linear-gradient(135deg, #7c3aed, #9333ea)", color: "#fff", boxShadow: "0 0 32px rgba(139,92,246,0.35)" }}>
                   <TrendingUp className="w-5 h-5" />

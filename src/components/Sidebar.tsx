@@ -17,16 +17,18 @@ const navItems = [
   { icon: Calculator,      label: "Calculator",        href: "/calculator" },
   { icon: BarChart2,       label: "Performance",       href: "/performance" },
   { icon: Calendar,        label: "Economic Calendar", href: "/calendar" },
-  { icon: Layers,          label: "TV Indicators",     href: "/indicators" },
+  { icon: Layers,          label: "TV Strategies",     href: "/tv-dashboard" },
   { icon: Gift,            label: "Referral",          href: "/referral" },
   { icon: SettingsIcon,    label: "Settings",          href: "/settings" },
 ];
 
+const TELEGRAM_URL = "https://t.me/TonnyFxacademy";
+
 const extraProducts = [
-  { icon: Users,    label: "1-on-1 Mentorship",       badge: "$150 / session", color: "text-violet-400", bg: "bg-violet-500/10" },
-  { icon: Trophy,   label: "Prop Firm Prep",          badge: "$79 / month",    color: "text-amber-400",  bg: "bg-amber-500/10" },
-  { icon: Video,    label: "Live Webinars",           badge: "Included",       color: "text-sky-400",    bg: "bg-sky-500/10" },
-  { icon: BarChart2,label: "Market Analysis Reports",  badge: "Included",       color: "text-blue-400",   bg: "bg-blue-500/10" },
+  { icon: Users,    label: "1-on-1 Mentorship",       badge: "$150 / session", color: "text-violet-400", bg: "bg-violet-500/10", href: TELEGRAM_URL },
+  { icon: Trophy,   label: "Prop Firm Prep",          badge: "$79 / month",    color: "text-amber-400",  bg: "bg-amber-500/10", href: TELEGRAM_URL },
+  { icon: Video,    label: "Live Webinars",           badge: "Included",       color: "text-sky-400",    bg: "bg-sky-500/10", href: TELEGRAM_URL },
+  { icon: BarChart2,label: "Market Analysis Reports",  badge: "Included",       color: "text-blue-400",   bg: "bg-blue-500/10", href: TELEGRAM_URL },
 ];
 
 /**
@@ -91,14 +93,14 @@ export default function Sidebar() {
         <ul className="space-y-0.5">
           {extraProducts.map(p => (
             <li key={p.label}>
-              <button className="group w-full flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground transition-all relative">
+              <a href={p.href} target="_blank" rel="noopener noreferrer" className="group w-full flex items-center gap-3 px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground transition-all relative">
                 <div className="absolute inset-0 rounded-xl bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-200" />
                 <div className={`relative z-10 w-7 h-7 rounded-lg ${p.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
                   <p.icon className={`w-3.5 h-3.5 ${p.color}`} />
                 </div>
                 <span className="relative z-10 font-medium text-xs flex-1 text-left truncate">{p.label}</span>
                 <span className={`relative z-10 text-[9px] font-bold px-1.5 py-0.5 rounded-full border flex-shrink-0 ${p.badge === "Included" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25" : "bg-primary/10 text-primary border-primary/25"}`}>{p.badge}</span>
-              </button>
+              </a>
             </li>
           ))}
         </ul>
