@@ -1,8 +1,9 @@
 // ── Brand / external links ──────────────────────────────────────────────────
 // MQTRADE PRO YouTube channel — used by the Webinars dashboard for the
 // "Subscribe" button and as the fallback live-stream destination.
+export const MQTRADE_YOUTUBE_HANDLE = "@mqtradepro";
 export const MQTRADE_YOUTUBE_ID = "UCgt_QgYoonLvY0OICqjJ5Mw";
-export const MQTRADE_YOUTUBE = `https://www.youtube.com/channel/${MQTRADE_YOUTUBE_ID}`;
+export const MQTRADE_YOUTUBE = "https://www.youtube.com/@mqtradepro";
 // Direct link to the channel's current/most-recent live stream.
 export const MQTRADE_YOUTUBE_LIVE = `${MQTRADE_YOUTUBE}/live`;
 
