@@ -24,6 +24,10 @@ import Referral from "./pages/Referral";
 import Indicators from "./pages/Indicators";
 import TVDashboard from "./pages/TVDashboard";
 import TVAccount from "./pages/TVAccount";
+import Mentorship from "./pages/Mentorship";
+import PropFirm from "./pages/PropFirm";
+import Webinars from "./pages/Webinars";
+import Reports from "./pages/Reports";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Disclaimer from "./pages/Disclaimer";
@@ -58,6 +62,12 @@ const App = () => (
             <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/referral" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
+
+            {/* Add-on product dashboards — logged-in only; each gates its own paid access */}
+            <Route path="/mentorship" element={<AuthOnlyRoute><Mentorship /></AuthOnlyRoute>} />
+            <Route path="/prop-firm" element={<AuthOnlyRoute><PropFirm /></AuthOnlyRoute>} />
+            <Route path="/webinars" element={<AuthOnlyRoute><Webinars /></AuthOnlyRoute>} />
+            <Route path="/reports" element={<AuthOnlyRoute><Reports /></AuthOnlyRoute>} />
             <Route path="/tv-dashboard" element={<AuthOnlyRoute><TVDashboard /></AuthOnlyRoute>} />
             <Route path="/tv-account" element={<AuthOnlyRoute><TVAccount /></AuthOnlyRoute>} />
             <Route path="/indicators" element={<AuthOnlyRoute><Indicators /></AuthOnlyRoute>} />

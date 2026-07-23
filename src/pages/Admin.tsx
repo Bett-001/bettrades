@@ -9,9 +9,10 @@ import {
   LayoutDashboard, Users, Signal, Megaphone, BookOpen,
   LogOut, Plus, Trash2, Edit2, X as XIcon, TrendingUp, TrendingDown,
   CheckCircle, XCircle, ShieldCheck, Bell, BarChart2, Pin,
-  DollarSign, Send, Tag, Copy, Layers,
+  DollarSign, Send, Tag, Copy, Layers, GraduationCap, Video, Radio,
 } from "lucide-react";
 import { toast } from "sonner";
+import { PRODUCTS } from "@/lib/constants";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface TSignal {
@@ -33,7 +34,7 @@ interface Strategy {
   content: string; category: string; timeframe: string; created_at: string;
 }
 
-type AdminTab = "overview"|"signals"|"subscribers"|"announcements"|"strategies"|"revenue"|"broadcast"|"coupons"|"indicators";
+type AdminTab = "overview"|"signals"|"subscribers"|"announcements"|"strategies"|"revenue"|"broadcast"|"coupons"|"indicators"|"coaching"|"webinars"|"reports";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const ASSETS = ["EUR/USD","GBP/USD","USD/JPY","AUD/USD","GBP/JPY","XAU/USD","NAS100","US30","BTC/USD","ETH/USD"];
@@ -62,6 +63,9 @@ const navItems = [
   { icon: Send,            label: "Broadcast",     tab: "broadcast" },
   { icon: Tag,             label: "Coupons",       tab: "coupons" },
   { icon: Layers,          label: "Indicators",    tab: "indicators" },
+  { icon: GraduationCap,   label: "Coaching",      tab: "coaching" },
+  { icon: Video,           label: "Webinars",      tab: "webinars" },
+  { icon: BarChart2,       label: "Reports",       tab: "reports" },
 ];
 
 const ANNTYPE_STYLES: Record<string,string> = {
@@ -448,6 +452,299 @@ function IndicatorsPanel() {
           </table>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Coaching (Mentorship / Prop Firm access requests) ───────────────────────
+interface PAccess { id:string; user_id:string; product:string; status:string; full_name:string|null; contact:string|null; note:string|null; created_at:string; granted_at:string|null; }
+
+function CoachingPanel() {
+  const [rows, setRows] = useState<PAccess[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase.from("product_access").select("*").order("created_at", { ascending: false });
+    if (data) setRows(data as PAccess[]);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const setStatus = async (row: PAccess, status: string) => {
+    const patch: Record<string, unknown> = { status };
+    if (status === "granted") patch.granted_at = new Date().toISOString();
+    const { error } = await supabase.from("product_access").update(patch).eq("id", row.id);
+    if (error) { toast.error(error.message); return; }
+    setRows(prev => prev.map(r => r.id === row.id ? { ...r, ...patch } as PAccess : r));
+    toast.success(status === "granted" ? "Access granted" : "Access revoked");
+  };
+
+  const label = (key: string) => (PRODUCTS as Record<string, { name: string }>)[key]?.name ?? key;
+  const pending = rows.filter(r => r.status === "pending");
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-display text-xl font-bold">Coaching Access</h2>
+        <p className="text-sm text-muted-foreground">{rows.length} requests · {pending.length} pending — Mentorship &amp; Prop Firm Prep</p>
+      </div>
+
+      {loading ? <div className="h-32 animate-pulse glass-card" /> : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead><tr className="border-b border-border">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Name</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Product</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Contact</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Note</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
+              <th className="px-4 py-3" />
+            </tr></thead>
+            <tbody>
+              {rows.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">No requests yet</td></tr>}
+              {rows.map(r => (
+                <tr key={r.id} className="border-b border-border/50 hover:bg-secondary/30 align-top">
+                  <td className="px-4 py-3 font-medium">{r.full_name ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{label(r.product)}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-primary">{r.contact ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs max-w-[200px]">{r.note ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      r.status === "granted" ? "bg-emerald-500/15 text-emerald-400"
+                      : r.status === "revoked" ? "bg-red-500/15 text-red-400"
+                      : "bg-amber-500/15 text-amber-400"}`}>{r.status}</span>
+                  </td>
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
+                    {r.status !== "granted"
+                      ? <button onClick={() => setStatus(r, "granted")} className="text-xs px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 font-medium">Grant</button>
+                      : <button onClick={() => setStatus(r, "revoked")} className="text-xs px-3 py-1 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 font-medium">Revoke</button>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Webinars (YouTube videos + go-live) ─────────────────────────────────────
+interface WebinarRow { id:string; title:string; description:string|null; youtube_url:string; is_live:boolean; published_at:string; }
+const blankWebinar = () => ({ title:"", description:"", youtube_url:"" });
+
+function WebinarsPanel() {
+  const [rows, setRows] = useState<WebinarRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState(blankWebinar());
+  const [showForm, setShowForm] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase.from("webinars").select("*").order("published_at", { ascending: false });
+    if (data) setRows(data as WebinarRow[]);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const add = async () => {
+    if (!form.title.trim() || !form.youtube_url.trim()) { toast.error("Title and YouTube URL required"); return; }
+    const { error } = await supabase.from("webinars").insert({
+      title: form.title, description: form.description || null, youtube_url: form.youtube_url, is_live: false,
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Webinar added");
+    setForm(blankWebinar()); setShowForm(false); load();
+  };
+
+  const remove = async (id: string) => {
+    await supabase.from("webinars").delete().eq("id", id);
+    setRows(prev => prev.filter(r => r.id !== id));
+    toast.success("Deleted");
+  };
+
+  // Toggle live: only one can be live at a time.
+  const toggleLive = async (row: WebinarRow) => {
+    const goingLive = !row.is_live;
+    if (goingLive) {
+      await supabase.from("webinars").update({ is_live: false }).neq("id", row.id);
+    }
+    const { error } = await supabase.from("webinars").update({ is_live: goingLive }).eq("id", row.id);
+    if (error) { toast.error(error.message); return; }
+    setRows(prev => prev.map(r => ({ ...r, is_live: r.id === row.id ? goingLive : false })));
+    toast.success(goingLive ? "You are now LIVE — banner is showing to users" : "Live ended");
+  };
+
+  const liveRow = rows.find(r => r.is_live);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-xl font-bold">Webinars</h2>
+          <p className="text-sm text-muted-foreground">{rows.length} videos {liveRow ? "· 🔴 LIVE now" : ""}</p>
+        </div>
+        <Button onClick={() => setShowForm(s => !s)} className="gap-2"><Plus className="w-4 h-4" /> Add Video</Button>
+      </div>
+
+      {liveRow && (
+        <div className="glass-card p-4 border-red-500/30 flex items-center gap-3">
+          <Radio className="w-5 h-5 text-red-500 animate-pulse" />
+          <div className="flex-1"><p className="font-semibold text-sm">You are LIVE: {liveRow.title}</p><p className="text-xs text-muted-foreground">The red banner is showing across the app.</p></div>
+          <Button variant="outline" size="sm" onClick={() => toggleLive(liveRow)}>End Live</Button>
+        </div>
+      )}
+
+      {showForm && (
+        <div className="glass-card p-5 space-y-4">
+          <h3 className="font-semibold">New Webinar</h3>
+          <div className="space-y-3">
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Title *</label>
+              <Input value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder="e.g. Weekly Gold Outlook" className="bg-secondary" /></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">YouTube URL *</label>
+              <Input value={form.youtube_url} onChange={e=>setForm(f=>({...f,youtube_url:e.target.value}))} placeholder="https://youtube.com/watch?v=… or /live/…" className="bg-secondary" /></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Description</label>
+              <textarea value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} rows={2} className="w-full rounded-xl bg-secondary border border-border px-3 py-2 text-sm resize-none" /></div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={add} variant="hero">Save</Button>
+            <Button variant="outline" onClick={()=>setShowForm(false)}>Cancel</Button>
+          </div>
+        </div>
+      )}
+
+      {loading ? <div className="h-32 animate-pulse glass-card" /> : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead><tr className="border-b border-border">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Title</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">URL</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Live</th>
+              <th className="px-4 py-3" />
+            </tr></thead>
+            <tbody>
+              {rows.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">No webinars yet</td></tr>}
+              {rows.map(w => (
+                <tr key={w.id} className="border-b border-border/50 hover:bg-secondary/30">
+                  <td className="px-4 py-3 font-medium">{w.title}</td>
+                  <td className="px-4 py-3"><a href={w.youtube_url} target="_blank" rel="noopener noreferrer" className="text-primary text-xs hover:underline truncate block max-w-[180px]">{w.youtube_url}</a></td>
+                  <td className="px-4 py-3">
+                    <button onClick={()=>toggleLive(w)} className={`text-xs px-3 py-1 rounded-lg font-medium ${w.is_live ? "bg-red-500/15 text-red-400" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+                      {w.is_live ? "● LIVE" : "Go Live"}
+                    </button>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={()=>remove(w.id)} className="text-red-400 hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Reports (market analysis) ───────────────────────────────────────────────
+interface ReportRow { id:string; title:string; summary:string|null; body:string|null; market:string|null; bias:string|null; image_url:string|null; published_at:string; }
+const blankReport = () => ({ title:"", summary:"", body:"", market:"Forex", bias:"Neutral", image_url:"" });
+const MARKETS = ["Forex","Gold","Indices","Crypto","Commodities"];
+const BIASES = ["Bullish","Bearish","Neutral"];
+
+function ReportsPanel() {
+  const [rows, setRows] = useState<ReportRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState(blankReport());
+  const [showForm, setShowForm] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase.from("reports").select("*").order("published_at", { ascending: false });
+    if (data) setRows(data as ReportRow[]);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const add = async () => {
+    if (!form.title.trim()) { toast.error("Title required"); return; }
+    const { error } = await supabase.from("reports").insert({
+      title: form.title, summary: form.summary || null, body: form.body || null,
+      market: form.market, bias: form.bias, image_url: form.image_url || null,
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Report published");
+    setForm(blankReport()); setShowForm(false); load();
+  };
+
+  const remove = async (id: string) => {
+    await supabase.from("reports").delete().eq("id", id);
+    setRows(prev => prev.filter(r => r.id !== id));
+    toast.success("Deleted");
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-xl font-bold">Market Analysis Reports</h2>
+          <p className="text-sm text-muted-foreground">{rows.length} published</p>
+        </div>
+        <Button onClick={() => setShowForm(s => !s)} className="gap-2"><Plus className="w-4 h-4" /> New Report</Button>
+      </div>
+
+      {showForm && (
+        <div className="glass-card p-5 space-y-4">
+          <h3 className="font-semibold">New Report</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Title *</label>
+              <Input value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder="e.g. XAU/USD Weekly Outlook" className="bg-secondary" /></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Market</label>
+              <select value={form.market} onChange={e=>setForm(f=>({...f,market:e.target.value}))} className="w-full h-10 rounded-xl bg-secondary border border-border px-3 text-sm">{MARKETS.map(m=><option key={m}>{m}</option>)}</select></div>
+            <div className="space-y-1"><label className="text-xs font-medium text-muted-foreground">Bias</label>
+              <select value={form.bias} onChange={e=>setForm(f=>({...f,bias:e.target.value}))} className="w-full h-10 rounded-xl bg-secondary border border-border px-3 text-sm">{BIASES.map(b=><option key={b}>{b}</option>)}</select></div>
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Image URL</label>
+              <Input value={form.image_url} onChange={e=>setForm(f=>({...f,image_url:e.target.value}))} placeholder="https://… (chart screenshot)" className="bg-secondary" /></div>
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Summary</label>
+              <Input value={form.summary} onChange={e=>setForm(f=>({...f,summary:e.target.value}))} placeholder="One-line takeaway shown on the card" className="bg-secondary" /></div>
+            <div className="space-y-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">Full Report</label>
+              <textarea value={form.body} onChange={e=>setForm(f=>({...f,body:e.target.value}))} rows={5} placeholder="Key levels, bias, trade ideas…" className="w-full rounded-xl bg-secondary border border-border px-3 py-2 text-sm resize-none" /></div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={add} variant="hero">Publish</Button>
+            <Button variant="outline" onClick={()=>setShowForm(false)}>Cancel</Button>
+          </div>
+        </div>
+      )}
+
+      {loading ? <div className="h-32 animate-pulse glass-card" /> : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead><tr className="border-b border-border">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Title</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Market</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Bias</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Published</th>
+              <th className="px-4 py-3" />
+            </tr></thead>
+            <tbody>
+              {rows.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">No reports yet</td></tr>}
+              {rows.map(r => (
+                <tr key={r.id} className="border-b border-border/50 hover:bg-secondary/30">
+                  <td className="px-4 py-3 font-medium">{r.title}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{r.market}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{r.bias}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(r.published_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={()=>remove(r.id)} className="text-red-400 hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
@@ -999,6 +1296,21 @@ export default function Admin() {
           {/* ── INDICATORS ── */}
           {tab==="indicators" && (
             <IndicatorsPanel />
+          )}
+
+          {/* ── COACHING ── */}
+          {tab==="coaching" && (
+            <CoachingPanel />
+          )}
+
+          {/* ── WEBINARS ── */}
+          {tab==="webinars" && (
+            <WebinarsPanel />
+          )}
+
+          {/* ── REPORTS ── */}
+          {tab==="reports" && (
+            <ReportsPanel />
           )}
 
         </div>
