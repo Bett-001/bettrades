@@ -76,3 +76,11 @@ create policy "reports public read" on reports
 drop policy if exists "reports admin write" on reports;
 create policy "reports admin write" on reports
   for all using (is_admin()) with check (is_admin());
+
+-- ── Realtime — so the LIVE banner updates the instant you go live ────────────
+-- (safe to re-run; ignore "already member" notices)
+do $$
+begin
+  alter publication supabase_realtime add table webinars;
+exception when duplicate_object then null;
+end $$;
